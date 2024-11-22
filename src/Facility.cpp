@@ -31,3 +31,46 @@ FacilityCategory FacilityType::getCategory() const{
     return category;
 }
 
+
+Facility::Facility(const string &name, const string &settlementName, const FacilityCategory category, const int price, 
+    const int lifeQuality_score, const int economy_score, const int environment_score) : 
+    FacilityType(name, category, price, lifeQuality_score, economy_score, environment_score),
+    settlementName(settlementName){};
+
+Facility::Facility(FacilityType &type, const string &settlementName):
+    FacilityType(type.getName(), type.getCategory(), type.getCost(), type.getLifeQualityScore(), type.getEconomyScore(),
+    type.getEnvironmentScore()),
+    settlementName(settlementName){};
+
+const string &Facility::getSettlementName() const{
+        return settlementName;
+}
+
+const int Facility::getTimeLeft() const{
+    return timeLeft;
+}
+
+FacilityStatus Facility::step(){
+    return;
+}
+
+void Facility::setStatus(FacilityStatus status){
+    this->status = status;
+}
+
+const FacilityStatus& Facility::getStatus() const{
+    return status;
+}
+
+const string Facility::toString() const{
+    //return "Facility: " + this->getName() + " in " + this->getSettlementName() + " is " + this->getStatus() + 
+    //" has " + this->getTimeLeft() + " time left";
+}
+
+
+        // const string &getSettlementName() const;
+        // const int getTimeLeft() const;
+        // FacilityStatus step();
+        // void setStatus(FacilityStatus status);
+        // const FacilityStatus& getStatus() const;
+        // const string toString() const;
