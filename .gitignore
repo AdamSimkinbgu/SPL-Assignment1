@@ -33,3 +33,6 @@
 
 # Binaries folder
 **/bin/
+
+# .ds_store files
+**/.DS_Store
