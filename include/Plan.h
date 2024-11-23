@@ -24,10 +24,11 @@ public:
     const vector<Facility *> &getFacilities() const;
     void addFacility(Facility *facility);
     const string toString() const;
+    vector <FacilityType> &cloneFacilityOptions(const vector<FacilityType> &facilityOptions) const;
 
 private:
     int plan_id;
-    Settlement &settlement;
+    const Settlement &settlement;
     SelectionPolicy *selectionPolicy; // What happens if we change this to a reference?
     PlanStatus status;
     vector<Facility *> facilities;
