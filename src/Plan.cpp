@@ -12,7 +12,7 @@ const vector<FacilityType> &facilityOptions)
       life_quality_score(0),
       economy_score(0),
       environment_score(0)
-      {    
+      {
       };
 
 Plan::Plan(const Plan &plan):
@@ -23,6 +23,12 @@ Plan::Plan(const Plan &plan):
     life_quality_score = plan.life_quality_score;
     economy_score = plan.economy_score;
     environment_score = plan.environment_score;
+    for (auto &facility : plan.facilities){
+        facilities.push_back((new Facility(*facility, facility->getSettlementName())));
+    }
+    for (auto &facility : plan.underConstruction){
+        underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
+    }
 }
 
 vector<FacilityType> &Plan::cloneFacilityOptions(const vector<FacilityType> &facilityOptions) const {
@@ -47,6 +53,14 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy) {
 }
 void Plan::step() {}
 void Plan::printStatus() {}
-const vector<Facility *> &Plan::getFacilities() const {}
-void Plan::addFacility(Facility *facility) {}
+const vector<Facility *> &Plan::getFacilities() const {
+    vector<Facility *> facilities_copy;
+    for (auto &facility : facilities){
+        facilities_copy.push_back(new Facility(*facility, facility->getSettlementName()));
+    }
+}
+
+void Plan::addFacility(Facility *facility) {
+    
+}
 const string Plan::toString() const {}
