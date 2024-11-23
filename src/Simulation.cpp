@@ -2,9 +2,9 @@
 #include <iostream>
 using std::string;
 
-Simulation::Simulation(const string &config_file_path):
-isRunning(false),planCounter(0){
-    std::cout<< "Simulation started" << std::endl;
+Simulation::Simulation(const string &config_file_path) : isRunning(false), planCounter(0)
+{
+    std::cout << "Simulation started motherfucker" << std::endl;
 }
 
 void start();
@@ -28,5 +28,3 @@ void step();
 void close();
 
 void open();
-
-
