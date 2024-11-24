@@ -6,7 +6,10 @@ ARGS = config_file.txt
 # Customize this file to define how to build your project.
 all: compile
 
-compile: bin/main
+compile: bin bin/main
+
+bin:
+	mkdir bin
 
 bin/main: bin/Simulation.o bin/main.o
 	g++ -o bin/main bin/Simulation.o bin/main.o
