@@ -12,29 +12,30 @@ const vector<FacilityType> &facilityOptions)
       life_quality_score(0),
       economy_score(0),
       environment_score(0)
-      {
-      };
+      {};
 
 Plan::Plan(const Plan &plan):
-    Plan(plan.plan_id, plan.settlement, plan.selectionPolicy,
-     plan.cloneFacilityOptions(plan.facilityOptions))
-{
-    status = plan.status;
-    life_quality_score = plan.life_quality_score;
-    economy_score = plan.economy_score;
-    environment_score = plan.environment_score;
-    for (auto &facility : plan.facilities){
-        facilities.push_back((new Facility(*facility, facility->getSettlementName())));
-    }
-    for (auto &facility : plan.underConstruction){
-        underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
-    }
+    plan_id(plan.plan_id),
+    settlement(plan.settlement),
+    selectionPolicy(plan.selectionPolicy),
+    facilityOptions(copyFacilityOptions(plan.facilityOptions))
+    {
+        status = plan.status;
+        life_quality_score = plan.life_quality_score;
+        economy_score = plan.economy_score;
+        environment_score = plan.environment_score;
+        for (Facility *facility : plan.facilities){
+            facilities.push_back((new Facility(*facility, facility->getSettlementName())));
+        }
+        for (Facility *facility : plan.underConstruction){
+            underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
+        }
 }
 
-vector<FacilityType> &Plan::cloneFacilityOptions(const vector<FacilityType> &facilityOptions) const {
+vector<FacilityType> Plan::copyFacilityOptions(const vector<FacilityType> &facilityOptions) {
     vector<FacilityType> clonedFacilityOptions;
-    for (auto &facilityType : facilityOptions){
-        clonedFacilityOptions.push_back(FacilityType(facilityType));
+    for (const FacilityType facilityType : facilityOptions){
+        (clonedFacilityOptions.push_back(facilityType));
     }
     return clonedFacilityOptions;
 }
@@ -58,6 +59,7 @@ const vector<Facility *> &Plan::getFacilities() const {
     for (auto &facility : facilities){
         facilities_copy.push_back(new Facility(*facility, facility->getSettlementName()));
     }
+    return facilities_copy;
 }
 
 void Plan::addFacility(Facility *facility) {
