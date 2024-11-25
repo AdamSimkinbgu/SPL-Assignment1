@@ -8,7 +8,7 @@ class SelectionPolicy {
         virtual const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) = 0;
         virtual const string toString() const = 0;
         virtual SelectionPolicy* clone() const = 0;
-        virtual ~SelectionPolicy() = default;
+        virtual ~SelectionPolicy();
 };
 
 class NaiveSelection: public SelectionPolicy {

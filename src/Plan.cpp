@@ -1,4 +1,5 @@
 #include "Plan.h"
+#include "Facility.h"
 #include <iostream>
 
 Plan::Plan(const int planId, const Settlement &settlement, 
@@ -50,7 +51,7 @@ const int Plan::getEnvironmentScore() const {
     return environment_score;
 }
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy) {
-    this->selectionPolicy = selectionPolicy;
+    this->selectionPolicy = selectionPolicy; // maybe change later
 }
 void Plan::step() {}
 void Plan::printStatus() {}
@@ -63,6 +64,7 @@ const vector<Facility *> &Plan::getFacilities() const {
 }
 
 void Plan::addFacility(Facility *facility) {
-    
+    facilities.push_back(facility);
 }
+
 const string Plan::toString() const {}
