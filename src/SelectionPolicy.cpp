@@ -7,19 +7,16 @@ NaiveSelection::NaiveSelection() {
 const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &facilitiesOptions) {
     if (this->lastSelectedIndex == NULL){
         this->lastSelectedIndex = 0;
-        return facilitiesOptions[this->lastSelectedIndex];
     }
-    else{
-        if (this->lastSelectedIndex == facilitiesOptions.size() - 1){
-            this->lastSelectedIndex = 0;
-            return facilitiesOptions[this->lastSelectedIndex];
-        }
-        else{
-            this->lastSelectedIndex++;
-            return facilitiesOptions[this->lastSelectedIndex];
-        }
+    else {
+        this->lastSelectedIndex++;
     }
-}
+    if (this->lastSelectedIndex == facilitiesOptions.size()){
+        this->lastSelectedIndex = 0;
+    }
+    return facilitiesOptions[this->lastSelectedIndex];
+    }
+
 
 const string NaiveSelection::toString() const {
     // to do
@@ -30,10 +27,6 @@ NaiveSelection *NaiveSelection::clone() const {
 NaiveSelection::~NaiveSelection() {
     lastSelectedIndex = NULL;
 }
-
-
-
-
 
 
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore):
@@ -94,20 +87,19 @@ EconomySelection::EconomySelection() {
     lastSelectedIndex = NULL;
 }
 const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions) {
-    if (facilitiesOptions.size() == 0){
-        return;
+    if (this->lastSelectedIndex == NULL){
+        this -> lastSelectedIndex = 0;
     }
-    int currEconomyMin = facilitiesOptions[0].getEconomyScore();
-    int currIdx = 0;
-    for (int i = 1; i < facilitiesOptions.size(); i++){
-        if (facilitiesOptions[i].getEconomyScore() < currEconomyMin){
-            currEconomyMin = facilitiesOptions[i].getEconomyScore();
-            int currIdx = i;
+    else {
+        this->lastSelectedIndex++;
+    }
+    while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ECONOMY){
+        if (this->lastSelectedIndex == facilitiesOptions.size()){
+            this->lastSelectedIndex = 0;
         }
+        this->lastSelectedIndex++;
     }
-    this->lastSelectedIndex = currIdx;
-    return facilitiesOptions[currIdx];
-    // do i need to check if curridx == lastselectedindex and return other option?
+    return facilitiesOptions[this->lastSelectedIndex];
 }
 
 const string EconomySelection::toString() const {
@@ -122,27 +114,26 @@ SustainabilitySelection::SustainabilitySelection() {
     lastSelectedIndex = NULL;
 }
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions) {
-
+    if (this->lastSelectedIndex == NULL){
+        this -> lastSelectedIndex = 0;
+    }
+    else {
+        this->lastSelectedIndex++;
+    }
+    while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ENVIRONMENT){
+        if (this->lastSelectedIndex == facilitiesOptions.size()){
+            this->lastSelectedIndex = 0;
+        }
+        this->lastSelectedIndex++;
+    }
+    return facilitiesOptions[this->lastSelectedIndex];
 }
-const string SustainabilitySelection::toString() const {}
-SustainabilitySelection *SustainabilitySelection::clone() const {}
+
+const string SustainabilitySelection::toString() const {
+    // to do
+}
+SustainabilitySelection *SustainabilitySelection::clone() const {
+    return new SustainabilitySelection(*this);
+}
 SustainabilitySelection::~SustainabilitySelection() {}
 
-//class SelectionPolicy {
-//     public:
-//         virtual const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) = 0;
-//         virtual const string toString() const = 0;
-//         virtual SelectionPolicy* clone() const = 0;
-//         virtual ~SelectionPolicy();
-// };
-
-// class SustainabilitySelection: public SelectionPolicy {
-//     public:
-//         SustainabilitySelection();
-//         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
-//         const string toString() const override;
-//         SustainabilitySelection *clone() const override;
-//         ~SustainabilitySelection() override = default;
-//     private:
-//         int lastSelectedIndex;
-// };

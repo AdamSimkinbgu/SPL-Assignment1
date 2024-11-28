@@ -55,6 +55,3 @@ const string Settlement::toString() const{
     }
 }
 
-//const string &getName() const;
-// SettlementType getType() const;
-// const string toString() const;
