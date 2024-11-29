@@ -53,7 +53,29 @@ const int Plan::getEnvironmentScore() const {
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy) {
     this->selectionPolicy = selectionPolicy; // maybe change later
 }
-void Plan::step() {}
+
+
+void Plan::step() {
+    if (status == PlanStatus::AVALIABLE){
+        while (underConstruction.size() < settlement.getConstructionLimit()){
+        FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
+        underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
+    }
+    for (Facility *facility : underConstruction){
+        facility->step();
+        if (facility->getStatus() == FacilityStatus::OPERATIONAL){
+            facilities.push_back(facility);
+        }
+    }
+}
+    if (underConstruction.size() == this->settlement.getConstructionLimit()){
+            status = PlanStatus::BUSY;
+        }
+        else {
+            status = PlanStatus::AVALIABLE;
+        }
+}
+
 void Plan::printStatus() {}
 const vector<Facility *> &Plan::getFacilities() const {
     vector<Facility *> facilities_copy;

@@ -19,8 +19,9 @@ const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &f
 
 
 const string NaiveSelection::toString() const {
-    // to do
+    return "You are using NaiveSelection";
 }
+
 NaiveSelection *NaiveSelection::clone() const {
     return new NaiveSelection(*this);
 }
@@ -72,7 +73,7 @@ int findMaxDiff(int a, int b, int c){
 }
 
 const string BalancedSelection::toString() const {
-    // to do
+    return "You are using BalancedSelection";
 }
 BalancedSelection *BalancedSelection::clone() const {
     return new BalancedSelection(*this);
@@ -103,7 +104,7 @@ const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> 
 }
 
 const string EconomySelection::toString() const {
-    // to do
+    return "You are using EconomySelection";
 }
 EconomySelection *EconomySelection::clone() const {
     return new EconomySelection(*this);
@@ -130,7 +131,7 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
 }
 
 const string SustainabilitySelection::toString() const {
-    // to do
+    return "You are using SustainabilitySelection";
 }
 SustainabilitySelection *SustainabilitySelection::clone() const {
     return new SustainabilitySelection(*this);

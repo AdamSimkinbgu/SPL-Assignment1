@@ -57,9 +57,19 @@ const string &Facility::getSettlementName() const{
 const int Facility::getTimeLeft() const{
     return timeLeft;
 }
+void Facility::reduceTimeLeft(){
+    this->timeLeft--;
+}
 
-FacilityStatus Facility::step(){
-    return;
+FacilityStatus Facility::step() {
+    reduceTimeLeft();
+    if (getTimeLeft() == 0){
+        status = FacilityStatus::OPERATIONAL;
+        return FacilityStatus::OPERATIONAL;
+    }
+    else{
+        return FacilityStatus::UNDER_CONSTRUCTIONS;
+    }
 }
 
 void Facility::setStatus(FacilityStatus status){
