@@ -27,6 +27,10 @@ const vector<Plan> &Simulation::getPlans() const{
     return plans;
 }
 
+const vector<Settlement*> &Simulation::getSettlements() const{
+    return settlements;
+}
+
 void step();
 
 void close();

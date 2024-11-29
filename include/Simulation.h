@@ -22,6 +22,7 @@ class Simulation {
         Settlement &getSettlement(const string &settlementName);
         Plan &getPlan(const int planID);
         const vector<Plan> &getPlans() const;
+        const vector<Settlement*> &getSettlements() const;
         void step();
         void close();
         void open();

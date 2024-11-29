@@ -74,6 +74,7 @@ AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy):
     selectionPolicy(selectionPolicy) {};
 
 void AddPlan::act(Simulation &simulation) {
+    
     vector<Plan> plans = simulation.getPlans();
     for (Plan plan : plans){
         if (plan.getSettlement().getName() == settlementName){

@@ -29,7 +29,6 @@ class BaseAction{
 };
 
 class SimulateStep : public BaseAction {
-
     public:
         SimulateStep(const int numOfSteps);
         void act(Simulation &simulation) override;
