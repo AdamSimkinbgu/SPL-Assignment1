@@ -58,15 +58,15 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy) {
 void Plan::step() {
     if (status == PlanStatus::AVALIABLE){
         while (underConstruction.size() < settlement.getConstructionLimit()){
-        FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
-        underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
+            FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
+            underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
     }
-    for (Facility *facility : underConstruction){
-        facility->step();
-        if (facility->getStatus() == FacilityStatus::OPERATIONAL){
-            facilities.push_back(facility);
+    for (int i = 0; i < underConstruction.size(); i++){
+        underConstruction[i]->step();
+        if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL){
+            facilities.push_back(underConstruction[i]);
+            underConstruction.erase(underConstruction.begin() + i);
         }
-    }
 }
     if (underConstruction.size() == this->settlement.getConstructionLimit()){
             status = PlanStatus::BUSY;
@@ -75,8 +75,17 @@ void Plan::step() {
             status = PlanStatus::AVALIABLE;
         }
 }
+}
 
-void Plan::printStatus() {}
+void Plan::printStatus() {
+    if (status == PlanStatus::AVALIABLE){
+        std::cout << "Status : AVALIABLE" << std::endl;
+    }
+    else {
+        std::cout << "Status : BUSY" << std::endl;
+        }
+}
+
 const vector<Facility *> &Plan::getFacilities() const {
     vector<Facility *> facilities_copy;
     for (auto &facility : facilities){
@@ -87,6 +96,10 @@ const vector<Facility *> &Plan::getFacilities() const {
 
 void Plan::addFacility(Facility *facility) {
     facilities.push_back(facility);
+}
+
+const Settlement &Plan::getSettlement() const {
+    return settlement;
 }
 
 const string Plan::toString() const {}

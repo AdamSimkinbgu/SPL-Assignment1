@@ -30,11 +30,32 @@
 //         ActionStatus status;
 // };
 
-SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {
-    
+
+
+ActionStatus BaseAction::getStatus() const{
+    return status;
 }
 
-void SimulateStep::act(Simulation &simulation) {}
+void BaseAction::complete(){
+    status = ActionStatus::COMPLETED;
+}
+void BaseAction::error(string errorMsg){
+    ActionStatus status = ActionStatus::ERROR;
+    std::cout << "Error: " + errorMsg << std::endl;
+}
+
+SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {
+}
+
+void SimulateStep::act(Simulation &simulation) {
+    vector <Plan> plans = simulation.getPlans();
+    for (Plan plan : plans){
+        plan.step();
+    }
+}
+
+
+
     
 
 // class SimulateStep : public BaseAction {
@@ -48,9 +69,18 @@ void SimulateStep::act(Simulation &simulation) {}
 //         const int numOfSteps;
 // };
 
-AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy){
-    Settlement 
-    
+AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy):
+    settlementName(settlementName),
+    selectionPolicy(selectionPolicy) {};
+
+void AddPlan::act(Simulation &simulation) {
+    vector<Plan> plans = simulation.getPlans();
+    for (Plan plan : plans){
+        if (plan.getSettlement().getName() == settlementName){
+            
+        }
+    }
+
 }
 // class AddPlan : public BaseAction {
 //     public:
@@ -63,10 +93,8 @@ AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy){
 //         const string selectionPolicy;
 // };
 
-AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType) : 
-{
-    if ()
-}
+AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType):
+settlementName(settlementName), settlementType(settlementType) {};
     
 
 

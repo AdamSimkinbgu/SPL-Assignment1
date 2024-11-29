@@ -23,6 +23,10 @@ Settlement &getSettlement(const string &settlementName);
 
 Plan &getPlan(const int planID);
 
+const vector<Plan> &Simulation::getPlans() const{
+    return plans;
+}
+
 void step();
 
 void close();

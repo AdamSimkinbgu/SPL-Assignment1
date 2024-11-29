@@ -24,6 +24,7 @@ class Plan {
         void addFacility(Facility* facility);
         const string toString() const;
         vector<FacilityType> copyFacilityOptions(const vector<FacilityType> &facilityOptions);
+        const Settlement &getSettlement() const;
 
     private:
         int plan_id;
