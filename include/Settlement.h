@@ -15,10 +15,10 @@ enum class SettlementType {
 class Settlement {
     public:
         Settlement(const string &name, SettlementType type);
-        Settlement(const Settlement &settlement);
         const string &getName() const;
         SettlementType getType() const;
         const string toString() const;
+        const int getConstructionLimit() const;
 
         private:
             const string name;
