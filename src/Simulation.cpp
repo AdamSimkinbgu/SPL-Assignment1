@@ -51,7 +51,9 @@ void Simulation::addSettlementFromConfig(std::vector<std::string> args)
 {
     SettlementType settleType = args[2] == "0" ? SettlementType::VILLAGE : args[2] == "1" ? SettlementType::CITY
                                                                                           : SettlementType::METROPOLIS;
-    settlements.push_back(&Settlement(args[1], settleType));
+    Settlement *temp = new Settlement(args[1], settleType);
+    settlements.push_back(temp);
+    std::cout << "Settlement " << args[1] << " added." << std::endl;
 }
 
 void Simulation::addFacilityFromConfig(std::vector<std::string> args)
@@ -75,6 +77,7 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
     int eco_impact = std::stoi(args[5]);
     int env_impact = std::stoi(args[6]);
     facilitiesOptions.push_back(FacilityType(nameFacility, catFacility, price, lifeq_impact, eco_impact, env_impact));
+    std::cout << "Facility " << nameFacility << " added." << std::endl;
 }
 
 void Simulation::addPlanFromConfig(std::vector<std::string> args)
@@ -104,6 +107,8 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
     }
     const std::vector<FacilityType> facil;
     plans.push_back(Plan(planID, currSettle, currSP, facil));
+    // delete currSP;
+    std::cout << "Plan number " << planID << " added." << std::endl;
     // facil blayt
 }
 

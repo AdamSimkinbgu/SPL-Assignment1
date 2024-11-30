@@ -44,101 +44,131 @@ AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : 
 
 void AddPlan::act(Simulation &simulation)
 {
+    for (Settlement *settlement : simulation.getSettlements())
+    {
+        if (settlement->getName() == settlementName)
+        {
+            for (std::string s : vector<std::string>{"nve", "bal", "eco", "env"})
+            {
+                if (selectionPolicy == s)
+                {
+                    SelectionPolicy *currSP;
+                    if (s == "env")
+                    {
+                        currSP = new NaiveSelection();
+                    }
+                    else if (s == "bal")
+                    {
+                        currSP = new BalancedSelection(0, 0, 0);
+                    }
+                    else if (s == "eco")
+                    {
+                        currSP = new EconomySelection();
+                    }
+                    else if (s == "env")
+                    {
+                        currSP = new SustainabilitySelection();
+                    }
+                    else
+                    {
+                        currSP = nullptr;
+                    }
+                    simulation.addPlan(*settlement, currSP);
+                    delete currSP;
+                    std::cout << "Plan added successfully" << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+    std::cout << "Cannot create this plan." << std::endl;
 }
 
-// class AddPlan : public BaseAction {
-//     public:
-//         AddPlan(const string &settlementName, const string &selectionPolicy);
-//         void act(Simulation &simulation) override;
-//         const string toString() const override;
-//         AddPlan *clone() const override;
-//     private:
-//         const string settlementName;
-//         const string selectionPolicy;
-// };
+AddPlan *AddPlan::clone() const {}
+
+const string AddPlan::toString() const {}
+
+// ################################################################################################################################################
 
 AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType) : settlementName(settlementName), settlementType(settlementType) {};
 
-// class AddSettlement : public BaseAction {
-//     public:
-//         AddSettlement(const string &settlementName,SettlementType settlementType);
-//         void act(Simulation &simulation) override;
-//         AddSettlement *clone() const override;
-//         const string toString() const override;
-//     private:
-//         const string settlementName;
-//         const SettlementType settlementType;
-// };
+void AddSettlement::act(Simulation &simulation)
+{
+    Settlement *newSettle = new Settlement(settlementName, settlementType);
+    simulation.addSettlement(newSettle);
+    std::cout << "Settlement " << settlementName << " added successfully." << std::endl;
+}
 
-// class AddFacility : public BaseAction {
-//     public:
-//         AddFacility(const string &facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore);
-//         void act(Simulation &simulation) override;
-//         AddFacility *clone() const override;
-//         const string toString() const override;
-//     private:
-//         const string facilityName;
-//         const FacilityCategory facilityCategory;
-//         const int price;
-//         const int lifeQualityScore;
-//         const int economyScore;
-//         const int environmentScore;
+AddSettlement *AddSettlement::clone() const {}
 
-// };
+const string AddSettlement::toString() const {}
 
-// class PrintPlanStatus: public BaseAction {
-//     public:
-//         PrintPlanStatus(int planId);
-//         void act(Simulation &simulation) override;
-//         PrintPlanStatus *clone() const override;
-//         const string toString() const override;
-//     private:
-//         const int planId;
-// };
+// ################################################################################################################################################
 
-// class ChangePlanPolicy : public BaseAction {
-//     public:
-//         ChangePlanPolicy(const int planId, const string &newPolicy);
-//         void act(Simulation &simulation) override;
-//         ChangePlanPolicy *clone() const override;
-//         const string toString() const override;
-//     private:
-//         const int planId;
-//         const string newPolicy;
-// };
+AddFacility::AddFacility(const string &facilityName, const FacilityCategory facilityCategory, const int price, const int lifeQualityScore, const int economyScore, const int environmentScore) : facilityName(facilityName), facilityCategory(facilityCategory), price(price), lifeQualityScore(lifeQualityScore), economyScore(economyScore), environmentScore(environmentScore) {}
 
-// class PrintActionsLog : public BaseAction {
-//     public:
-//         PrintActionsLog();
-//         void act(Simulation &simulation) override;
-//         PrintActionsLog *clone() const override;
-//         const string toString() const override;
-//     private:
-// };
+void AddFacility::act(Simulation &simulation) {}
 
-// class Close : public BaseAction {
-//     public:
-//         Close();
-//         void act(Simulation &simulation) override;
-//         Close *clone() const override;
-//         const string toString() const override;
-//     private:
-// };
+AddFacility *AddFacility::clone() const {}
 
-// class BackupSimulation : public BaseAction {
-//     public:
-//         BackupSimulation();
-//         void act(Simulation &simulation) override;
-//         BackupSimulation *clone() const override;
-//         const string toString() const override;
-//     private:
-// };
+const string AddFacility::toString() const {}
 
-// class RestoreSimulation : public BaseAction {
-//     public:
-//         RestoreSimulation();
-//         void act(Simulation &simulation) override;
-//         RestoreSimulation *clone() const override;
-//         const string toString() const override;
-//     private:
-// };
+// ################################################################################################################################################
+
+PrintPlanStatus::PrintPlanStatus(int planID) : planId(planID) {}
+
+void PrintPlanStatus::act(Simulation &simulation) {}
+
+PrintPlanStatus *PrintPlanStatus::clone() const {}
+
+const string PrintPlanStatus::toString() const {}
+
+// ################################################################################################################################################
+
+ChangePlanPolicy::ChangePlanPolicy(const int planID, const string &newPolicy) : planId(planID), newPolicy(newPolicy) {}
+
+void ChangePlanPolicy::act(Simulation &simulation) {}
+
+ChangePlanPolicy *ChangePlanPolicy::clone() const {}
+
+const string ChangePlanPolicy::toString() const {}
+
+// ################################################################################################################################################
+
+PrintActionsLog::PrintActionsLog() {}
+
+void PrintActionsLog::act(Simulation &simulation) {}
+
+PrintActionsLog *PrintActionsLog::clone() const {}
+
+const string PrintActionsLog::toString() const {}
+
+// ################################################################################################################################################
+
+Close::Close() {}
+
+void Close::act(Simulation &simulation) {}
+
+Close *Close::clone() const {}
+
+const string Close::toString() const {}
+
+// ################################################################################################################################################
+
+BackupSimulation::BackupSimulation() {}
+
+void BackupSimulation::act(Simulation &simulation) {}
+
+BackupSimulation *BackupSimulation::clone() const {}
+
+const string BackupSimulation::toString() const {}
+
+// ################################################################################################################################################
+
+RestoreSimulation::RestoreSimulation() {}
+
+void RestoreSimulation::act(Simulation &simulation) {}
+
+RestoreSimulation *RestoreSimulation::clone() const {}
+
+const string RestoreSimulation::toString() const {}

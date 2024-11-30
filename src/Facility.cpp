@@ -110,6 +110,6 @@ const FacilityStatus &Facility::getStatus() const
 
 const string Facility::toString() const
 {
-    // return "Facility: " + this->getName() + " in " + this->getSettlementName() + " is " + this->getStatus() +
-    //" has " + this->getTimeLeft() + " time left";
+    return "Facility: " + this->getName() + " in " + this->getSettlementName() + " is " + this->getStatus() +
+           " has " + this->getTimeLeft() + " time left";
 }
