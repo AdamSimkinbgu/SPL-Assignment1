@@ -5,8 +5,6 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
-
-
 // enum class ActionStatus{
 //     COMPLETED, ERROR
 // };
@@ -30,33 +28,41 @@
 //         ActionStatus status;
 // };
 
-
-
-ActionStatus BaseAction::getStatus() const{
+ActionStatus BaseAction::getStatus() const
+{
     return status;
 }
 
-void BaseAction::complete(){
+void BaseAction::act(Simulation &simulation) {}
+
+const string BaseAction::toString() const {}
+
+BaseAction *BaseAction::clone() const {}
+
+BaseAction::~BaseAction() {}
+
+void BaseAction::complete()
+{
     status = ActionStatus::COMPLETED;
 }
-void BaseAction::error(string errorMsg){
+void BaseAction::error(string errorMsg)
+{
     ActionStatus status = ActionStatus::ERROR;
     std::cout << "Error: " + errorMsg << std::endl;
 }
 
-SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {
+SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps)
+{
 }
 
-void SimulateStep::act(Simulation &simulation) {
-    vector <Plan> plans = simulation.getPlans();
-    for (Plan plan : plans){
+void SimulateStep::act(Simulation &simulation)
+{
+    vector<Plan> plans = simulation.getPlans();
+    for (Plan plan : plans)
+    {
         plan.step();
     }
 }
-
-
-
-    
 
 // class SimulateStep : public BaseAction {
 
@@ -69,19 +75,19 @@ void SimulateStep::act(Simulation &simulation) {
 //         const int numOfSteps;
 // };
 
-AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy):
-    settlementName(settlementName),
-    selectionPolicy(selectionPolicy) {};
+AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : settlementName(settlementName),
+                                                                                selectionPolicy(selectionPolicy) {};
 
-void AddPlan::act(Simulation &simulation) {
-    
+void AddPlan::act(Simulation &simulation)
+{
+
     vector<Plan> plans = simulation.getPlans();
-    for (Plan plan : plans){
-        if (plan.getSettlement().getName() == settlementName){
-            
+    for (Plan plan : plans)
+    {
+        if (plan.getSettlement().getName() == settlementName)
+        {
         }
     }
-
 }
 // class AddPlan : public BaseAction {
 //     public:
@@ -94,10 +100,7 @@ void AddPlan::act(Simulation &simulation) {
 //         const string selectionPolicy;
 // };
 
-AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType):
-settlementName(settlementName), settlementType(settlementType) {};
-    
-
+AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType) : settlementName(settlementName), settlementType(settlementType) {};
 
 // class AddSettlement : public BaseAction {
 //     public:
@@ -109,8 +112,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const string settlementName;
 //         const SettlementType settlementType;
 // };
-
-
 
 // class AddFacility : public BaseAction {
 //     public:
@@ -138,7 +139,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const int planId;
 // };
 
-
 // class ChangePlanPolicy : public BaseAction {
 //     public:
 //         ChangePlanPolicy(const int planId, const string &newPolicy);
@@ -149,7 +149,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const int planId;
 //         const string newPolicy;
 // };
-
 
 // class PrintActionsLog : public BaseAction {
 //     public:
@@ -177,7 +176,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const string toString() const override;
 //     private:
 // };
-
 
 // class RestoreSimulation : public BaseAction {
 //     public:
