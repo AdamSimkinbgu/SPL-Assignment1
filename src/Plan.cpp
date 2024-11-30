@@ -68,30 +68,27 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 
 void Plan::step()
 {
-    if (status == PlanStatus::AVALIABLE)
+    while (underConstruction.size() < settlement.getConstructionLimit())
     {
-        while (underConstruction.size() < settlement.getConstructionLimit())
+        FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
+        underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
+    }
+    for (int i = 0; i < underConstruction.size(); i++)
+    {
+        underConstruction[i]->step();
+        if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL)
         {
-            FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
-            underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
+            facilities.push_back(underConstruction[i]);
+            underConstruction.erase(underConstruction.begin() + i);
         }
-        for (int i = 0; i < underConstruction.size(); i++)
-        {
-            underConstruction[i]->step();
-            if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL)
-            {
-                facilities.push_back(underConstruction[i]);
-                underConstruction.erase(underConstruction.begin() + i);
-            }
-        }
-        if (underConstruction.size() == this->settlement.getConstructionLimit())
-        {
-            status = PlanStatus::BUSY;
-        }
-        else
-        {
-            status = PlanStatus::AVALIABLE;
-        }
+    }
+    if (underConstruction.size() == this->settlement.getConstructionLimit())
+    {
+        status = PlanStatus::BUSY;
+    }
+    else
+    {
+        status = PlanStatus::AVALIABLE;
     }
 }
 

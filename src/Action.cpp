@@ -5,29 +5,6 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
-// enum class ActionStatus{
-//     COMPLETED, ERROR
-// };
-
-// class BaseAction{
-//     public:
-//         BaseAction();
-//         ActionStatus getStatus() const;
-//         virtual void act(Simulation& simulation)=0;
-//         virtual const string toString() const=0;
-//         virtual BaseAction* clone() const = 0;
-//         virtual ~BaseAction() = default;
-
-//     protected:
-//         void complete();
-//         void error(string errorMsg);
-//         const string &getErrorMsg() const;
-
-//     private:
-//         string errorMsg;
-//         ActionStatus status;
-// };
-
 ActionStatus BaseAction::getStatus() const
 {
     return status;
@@ -51,9 +28,7 @@ void BaseAction::error(string errorMsg)
     std::cout << "Error: " + errorMsg << std::endl;
 }
 
-SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps)
-{
-}
+SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {}
 
 void SimulateStep::act(Simulation &simulation)
 {
@@ -64,31 +39,13 @@ void SimulateStep::act(Simulation &simulation)
     }
 }
 
-// class SimulateStep : public BaseAction {
-
-//     public:
-//         SimulateStep(const int numOfSteps);
-//         void act(Simulation &simulation) override;
-//         const string toString() const override;
-//         SimulateStep *clone() const override;
-//     private:
-//         const int numOfSteps;
-// };
-
 AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : settlementName(settlementName),
                                                                                 selectionPolicy(selectionPolicy) {};
 
 void AddPlan::act(Simulation &simulation)
 {
-
-    vector<Plan> plans = simulation.getPlans();
-    for (Plan plan : plans)
-    {
-        if (plan.getSettlement().getName() == settlementName)
-        {
-        }
-    }
 }
+
 // class AddPlan : public BaseAction {
 //     public:
 //         AddPlan(const string &settlementName, const string &selectionPolicy);

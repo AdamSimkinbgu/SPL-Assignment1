@@ -1,11 +1,110 @@
 #include "Simulation.h"
 #include "Action.h"
+#include "Auxiliary.h"
 #include <iostream>
 using std::string;
 
 Simulation::Simulation(const string &config_file_path) : isRunning(false), planCounter(0)
 {
+    std::ifstream configFile(config_file_path);
+    if (!configFile.is_open())
+    {
+        throw std::runtime_error("Unable to open configuration file: " + config_file_path);
+    }
+
+    std::string line;
+    while (std::getline(configFile, line))
+    {
+        // Ignore comments and empty lines
+        if (line.empty() || line[0] == '#')
+        {
+            continue;
+        }
+
+        // Parse the line into arguments
+        std::vector<std::string> arguments = Auxiliary::parseArguments(line);
+
+        // Process each type of command
+        if (arguments[0] == "settlement")
+        {
+            addSettlementFromConfig(arguments);
+        }
+        else if (arguments[0] == "facility")
+        {
+            addFacilityFromConfig(arguments);
+        }
+        else if (arguments[0] == "plan")
+        {
+            addPlanFromConfig(arguments);
+        }
+        else
+        {
+            std::cerr << "Unknown command in config file: " << arguments[0] << std::endl;
+        }
+    }
+
+    configFile.close();
     std::cout << "Simulation object created" << std::endl;
+}
+
+void Simulation::addSettlementFromConfig(std::vector<std::string> args)
+{
+    SettlementType settleType = args[2] == "0" ? SettlementType::VILLAGE : args[2] == "1" ? SettlementType::CITY
+                                                                                          : SettlementType::METROPOLIS;
+    settlements.push_back(&Settlement(args[1], settleType));
+}
+
+void Simulation::addFacilityFromConfig(std::vector<std::string> args)
+{
+    std::string nameFacility = args[1];
+    FacilityCategory catFacility;
+    if (args[2] == "0")
+    {
+        catFacility = FacilityCategory::LIFE_QUALITY;
+    }
+    else if (args[2] == "1")
+    {
+        catFacility = FacilityCategory::ECONOMY;
+    }
+    else if (args[2] == "2")
+    {
+        catFacility = FacilityCategory::ENVIRONMENT;
+    }
+    int price = std::stoi(args[3]);
+    int lifeq_impact = std::stoi(args[4]);
+    int eco_impact = std::stoi(args[5]);
+    int env_impact = std::stoi(args[6]);
+    facilitiesOptions.push_back(FacilityType(nameFacility, catFacility, price, lifeq_impact, eco_impact, env_impact));
+}
+
+void Simulation::addPlanFromConfig(std::vector<std::string> args)
+{
+    int planID = getNextPlanID();
+    Settlement currSettle = getSettlement(args[1]);
+    SelectionPolicy *currSP;
+    if (args[2] == "env")
+    {
+        currSP = new NaiveSelection();
+    }
+    else if (args[2] == "bal")
+    {
+        currSP = new BalancedSelection(0, 0, 0);
+    }
+    else if (args[2] == "eco")
+    {
+        currSP = new EconomySelection();
+    }
+    else if (args[2] == "env")
+    {
+        currSP = new SustainabilitySelection();
+    }
+    else
+    {
+        currSP = nullptr;
+    }
+    const std::vector<FacilityType> facil;
+    plans.push_back(Plan(planID, currSettle, currSP, facil));
+    // facil blayt
 }
 
 // this function will start the simulation process
@@ -48,17 +147,27 @@ bool Simulation::addSettlement(Settlement *settlement)
     if (!settlement)
     {
         std::cout << "Error: Settlement points to null." << std::endl;
-        return;
+        return false;
     }
     settlements.push_back(settlement);
     std::cout << "Settlement added to settlements vector." << std::endl;
+    return true;
 }
 
 // this is going to add a facility into the facilties vector
 bool Simulation::addFacility(FacilityType facility)
 {
+    for (const FacilityType &existingFacility : facilitiesOptions)
+    {
+        if (!(existingFacility == facility))
+        {
+            std::cout << "Error: Facility already exists in the facilityOptions vector." << std::endl;
+            return false; // Facility cannot be added
+        }
+    }
     facilitiesOptions.push_back(facility);
     std::cout << "Facility added to facilityOptions vector." << std::endl;
+    return true;
 }
 
 // checks if a settlement DOES exist... pff...
@@ -84,7 +193,6 @@ Settlement &Simulation::getSettlement(const string &settlementName)
             return *settlement;
         }
     }
-    return; // not sure what to do if not found, maybe the check for if the settlement exists needs to be outside of this function
 }
 
 // given the plan id, returns the address to it
@@ -124,12 +232,12 @@ const int Simulation::getNextPlanID() const
 // executes a single step in the simulation
 void Simulation::step()
 {
-    for (Plan plan : plans)
-    {
-        if (plan.getPlanStatus() == PlanStatus::AVALIABLE)
-        {
-        }
-    }
+    std::cout << "Enter the number of steps to take: " << std::endl;
+    int numberOfSteps;
+    std::cin >> numberOfSteps;
+    SimulateStep curr(numberOfSteps);
+    actionsLog.push_back(&curr);
+    curr.act(*this);
 }
 
 // closes the simulation after applying changes and a save, printing the actions done at last

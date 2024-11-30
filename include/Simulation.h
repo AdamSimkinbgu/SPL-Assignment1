@@ -15,13 +15,16 @@ class Simulation
 public:
     Simulation(const string &configFilePath);
     void start();
-    void addPlan(const Settlement &settlemenåt, SelectionPolicy *selectionPolicy);
+    void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
     void addAction(BaseAction *action);
     bool addSettlement(Settlement *settlement);
     bool addFacility(FacilityType facility);
     bool isSettlementExists(const string &settlementName);
     Settlement &getSettlement(const string &settlementName);
     Plan &getPlan(const int planID);
+    void addSettlementFromConfig(std::vector<std::string>);
+    void addFacilityFromConfig(std::vector<std::string>);
+    void addPlanFromConfig(std::vector<std::string>);
     const vector<Plan> &getPlans() const;
     const vector<Settlement *> &getSettlements() const;
     const int getNextPlanID() const;
