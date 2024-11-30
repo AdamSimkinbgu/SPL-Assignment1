@@ -5,84 +5,47 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
-
-
-// enum class ActionStatus{
-//     COMPLETED, ERROR
-// };
-
-// class BaseAction{
-//     public:
-//         BaseAction();
-//         ActionStatus getStatus() const;
-//         virtual void act(Simulation& simulation)=0;
-//         virtual const string toString() const=0;
-//         virtual BaseAction* clone() const = 0;
-//         virtual ~BaseAction() = default;
-
-//     protected:
-//         void complete();
-//         void error(string errorMsg);
-//         const string &getErrorMsg() const;
-
-//     private:
-//         string errorMsg;
-//         ActionStatus status;
-// };
-
-
-
-ActionStatus BaseAction::getStatus() const{
+ActionStatus BaseAction::getStatus() const
+{
     return status;
 }
 
-void BaseAction::complete(){
+void BaseAction::act(Simulation &simulation) {}
+
+const string BaseAction::toString() const {}
+
+BaseAction *BaseAction::clone() const {}
+
+BaseAction::~BaseAction() {}
+
+void BaseAction::complete()
+{
     status = ActionStatus::COMPLETED;
 }
-void BaseAction::error(string errorMsg){
+void BaseAction::error(string errorMsg)
+{
     ActionStatus status = ActionStatus::ERROR;
     std::cout << "Error: " + errorMsg << std::endl;
 }
 
-SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {
-}
+SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {}
 
-void SimulateStep::act(Simulation &simulation) {
-    vector <Plan> plans = simulation.getPlans();
-    for (Plan plan : plans){
+void SimulateStep::act(Simulation &simulation)
+{
+    vector<Plan> plans = simulation.getPlans();
+    for (Plan plan : plans)
+    {
         plan.step();
     }
 }
 
+AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : settlementName(settlementName),
+                                                                                selectionPolicy(selectionPolicy) {};
 
-
-    
-
-// class SimulateStep : public BaseAction {
-
-//     public:
-//         SimulateStep(const int numOfSteps);
-//         void act(Simulation &simulation) override;
-//         const string toString() const override;
-//         SimulateStep *clone() const override;
-//     private:
-//         const int numOfSteps;
-// };
-
-AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy):
-    settlementName(settlementName),
-    selectionPolicy(selectionPolicy) {};
-
-void AddPlan::act(Simulation &simulation) {
-    
-    vector<Plan> plans = simulation.getPlans();
-    for (Plan plan : plans){
-        if (plan.getSettlement().getName() == settlementName){
-            
-        }
-    }
-
+void AddPlan::act(Simulation &simulation)
+{
 }
+
 // class AddPlan : public BaseAction {
 //     public:
 //         AddPlan(const string &settlementName, const string &selectionPolicy);
@@ -94,10 +57,7 @@ void AddPlan::act(Simulation &simulation) {
 //         const string selectionPolicy;
 // };
 
-AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType):
-settlementName(settlementName), settlementType(settlementType) {};
-    
-
+AddSettlement::AddSettlement(const string &settlementName, SettlementType settlementType) : settlementName(settlementName), settlementType(settlementType) {};
 
 // class AddSettlement : public BaseAction {
 //     public:
@@ -109,8 +69,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const string settlementName;
 //         const SettlementType settlementType;
 // };
-
-
 
 // class AddFacility : public BaseAction {
 //     public:
@@ -138,7 +96,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const int planId;
 // };
 
-
 // class ChangePlanPolicy : public BaseAction {
 //     public:
 //         ChangePlanPolicy(const int planId, const string &newPolicy);
@@ -149,7 +106,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const int planId;
 //         const string newPolicy;
 // };
-
 
 // class PrintActionsLog : public BaseAction {
 //     public:
@@ -177,7 +133,6 @@ settlementName(settlementName), settlementType(settlementType) {};
 //         const string toString() const override;
 //     private:
 // };
-
 
 // class RestoreSimulation : public BaseAction {
 //     public:
