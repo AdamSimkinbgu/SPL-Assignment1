@@ -21,6 +21,7 @@ public:
     const int getEnvironmentScore() const;
     const int getPlanID() const;
     const PlanStatus getPlanStatus() const;
+    SelectionPolicy *getSelectionPolicy() const;
     void setSelectionPolicy(SelectionPolicy *selectionPolicy);
     void step();
     void printStatus();
@@ -29,6 +30,7 @@ public:
     const string toString() const;
     vector<FacilityType> copyFacilityOptions(const vector<FacilityType> &facilityOptions);
     const Settlement &getSettlement() const;
+    string printAllFacilities() const;
 
 private:
     int plan_id;

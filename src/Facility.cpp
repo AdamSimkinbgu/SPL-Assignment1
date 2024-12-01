@@ -47,19 +47,21 @@ FacilityCategory FacilityType::getCategory() const
 }
 
 Facility::Facility(const string &name, const string &settlementName, const FacilityCategory category, const int price,
-                   const int lifeQuality_score, const int economy_score, const int environment_score) : FacilityType(name, category, price, lifeQuality_score, economy_score, environment_score),
-                                                                                                        settlementName(settlementName)
-{
-    status = FacilityStatus::UNDER_CONSTRUCTIONS;
-    timeLeft = price;
+                   const int lifeQuality_score, const int economy_score, const int environment_score) : 
+                   FacilityType(name, category, price, lifeQuality_score, economy_score, environment_score),
+                   settlementName(settlementName)
+                    {
+                        status = FacilityStatus::UNDER_CONSTRUCTIONS;
+                        timeLeft = price;
 };
 
-Facility::Facility(const FacilityType &type, const string &settlementName) : FacilityType(type.getName(), type.getCategory(), type.getCost(), type.getLifeQualityScore(),
-                                                                                          type.getEconomyScore(), type.getEnvironmentScore()),
-                                                                             settlementName(settlementName)
-{
-    status = FacilityStatus::UNDER_CONSTRUCTIONS;
-    timeLeft = type.getCost();
+Facility::Facility(const FacilityType &type, const string &settlementName) : 
+                    FacilityType(type.getName(), type.getCategory(), type.getCost(), type.getLifeQualityScore(),
+                                type.getEconomyScore(), type.getEnvironmentScore()),
+                                settlementName(settlementName)
+                                {
+                                    status = FacilityStatus::UNDER_CONSTRUCTIONS;
+                                    timeLeft = type.getCost();
 }
 
 bool Facility::operator==(const Facility &other) const
@@ -108,8 +110,17 @@ const FacilityStatus &Facility::getStatus() const
     return status;
 }
 
+const string Facility::getStringStatus() const
+{
+    if (this->getStatus() == FacilityStatus::OPERATIONAL)
+    {
+        return "OPERATIONAL";
+    }
+    else
+    {
+    return "UNDER_CONSTRUCTIONS";
+    }
+}
 const string Facility::toString() const
 {
-    return "Facility: " + this->getName() + " in " + this->getSettlementName() + " is " + this->getStatus() +
-           " has " + this->getTimeLeft() + " time left";
-}
+    return "facilityName: " + this->getName() + " facilityStatus: " + this->getStringStatus();

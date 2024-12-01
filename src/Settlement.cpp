@@ -26,6 +26,10 @@ const int Settlement::getConstructionLimit() const{
 };
 
 const string Settlement::toString() const{
+    return "Settlement " + name + " is a " + typeToString();
+};
+
+const string Settlement::typeToString() const{
     switch(type){
         case SettlementType::VILLAGE:
             return "Village";

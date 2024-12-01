@@ -1,12 +1,18 @@
 #include <SelectionPolicy.h>
 #include <iostream>
 
+bool SelectionPolicy::operator==(const SelectionPolicy &other) const
+{
+    return typeid(*this) == typeid(other);
+}
+
 // ########################## VVV Naive Selection VVV ###################################
 
 NaiveSelection::NaiveSelection()
 {
     lastSelectedIndex = NULL;
 }
+
 const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
     if (this->lastSelectedIndex == NULL)
@@ -26,13 +32,19 @@ const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &f
 
 const string NaiveSelection::toString() const
 {
-    return "You are using NaiveSelection";
+    return "nve";
+}
+
+const string NaiveSelection::fullToString() const
+{
+    return "Naive";
 }
 
 NaiveSelection *NaiveSelection::clone() const
 {
     return new NaiveSelection(*this);
 }
+
 NaiveSelection::~NaiveSelection()
 {
     lastSelectedIndex = NULL;
@@ -40,11 +52,12 @@ NaiveSelection::~NaiveSelection()
 
 // ########################## VVV Balance Selection VVV #################################
 
-BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : LifeQualityScore(LifeQualityScore),
-                                                                                                     EconomyScore(EconomyScore),
-                                                                                                     EnvironmentScore(EnvironmentScore)
-{
-}
+BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : 
+LifeQualityScore(LifeQualityScore),
+EconomyScore(EconomyScore),
+EnvironmentScore(EnvironmentScore)
+{}
+
 const FacilityType &BalancedSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
     const FacilityType *bestFacility = &facilitiesOptions[0];
@@ -92,12 +105,19 @@ int findMaxDiff(int a, int b, int c)
 
 const string BalancedSelection::toString() const
 {
-    return "You are using BalancedSelection";
+    return "bal";
 }
+
+const string BalancedSelection::fullToString() const
+{
+    return "Balanced";
+}
+
 BalancedSelection *BalancedSelection::clone() const
 {
     return new BalancedSelection(*this);
 }
+
 BalancedSelection::~BalancedSelection() {}
 
 // ########################## VVV Economy Selection VVV #################################
@@ -106,6 +126,7 @@ EconomySelection::EconomySelection()
 {
     lastSelectedIndex = NULL;
 }
+
 const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
     if (this->lastSelectedIndex == NULL)
@@ -129,12 +150,19 @@ const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> 
 
 const string EconomySelection::toString() const
 {
-    return "You are using EconomySelection";
+    return "eco";
 }
+
+const string EconomySelection::fullToString() const
+{
+    return "Economy";
+}
+
 EconomySelection *EconomySelection::clone() const
 {
     return new EconomySelection(*this);
 }
+
 EconomySelection::~EconomySelection() {}
 
 // ########################## VVV Sustainability Selection VVV ##########################
@@ -143,6 +171,7 @@ SustainabilitySelection::SustainabilitySelection()
 {
     lastSelectedIndex = NULL;
 }
+
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
     if (this->lastSelectedIndex == NULL)
@@ -166,10 +195,16 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
 
 const string SustainabilitySelection::toString() const
 {
-    return "You are using SustainabilitySelection";
+    return "env";
+}
+
+const string SustainabilitySelection::fullToString() const
+{
+    return "Sustainability";
 }
 SustainabilitySelection *SustainabilitySelection::clone() const
 {
     return new SustainabilitySelection(*this);
 }
+
 SustainabilitySelection::~SustainabilitySelection() {}

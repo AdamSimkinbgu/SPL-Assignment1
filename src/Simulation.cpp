@@ -6,6 +6,7 @@ using std::string;
 
 Simulation::Simulation(const string &config_file_path) : isRunning(false), planCounter(0)
 {
+    std::cout << "The simulation has started" << std::endl;
     std::ifstream configFile(config_file_path);
     if (!configFile.is_open())
     {
@@ -123,7 +124,7 @@ void Simulation::start()
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
 {
     // settlement name needs to be checked before the call to this function
-    if (!selectionPolicy)
+    if (!selectionPolicy) //is this realy nessesary? we do it in AddPlan::act
     {
         std::cout << "Error: Selection policy is null" << std::endl;
         return;
@@ -131,28 +132,37 @@ void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectio
     int nextID = planCounter++;
     Plan newPlan(nextID, settlement, selectionPolicy, facilitiesOptions);
     plans.push_back(newPlan);
-    std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl;
+    std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl; // maybe not needed
 }
 
 // wtf is this? I think this is how it's supposed to be
 void Simulation::addAction(BaseAction *action)
 {
-    if (!action)
+    if (!action)// not needed also i think
     {
         std::cout << "Error: Action points to null." << std::endl;
         return;
     }
     actionsLog.push_back(action);
     std::cout << "Action added to log, status: " << (action->getStatus() == ActionStatus::COMPLETED ? "COMPLETED." : "ERROR.") << std::endl;
+    // last line not needed i think
 }
 
 // this will add a settlement into the appropriate vector - conditions applied
 bool Simulation::addSettlement(Settlement *settlement)
 {
-    if (!settlement)
+    if (!settlement) // is this really nessesary? we do it in AddSettlement::act
     {
         std::cout << "Error: Settlement points to null." << std::endl;
         return false;
+    }
+    for (Settlement * exsistsSettlement: settlements)
+    {
+        if (exsistsSettlement->getName() == settlement->getName())
+        {
+            std::cout << "Settlement already exists" << std::endl;
+            return false;
+        }
     }
     settlements.push_back(settlement);
     std::cout << "Settlement added to settlements vector." << std::endl;
@@ -164,14 +174,14 @@ bool Simulation::addFacility(FacilityType facility)
 {
     for (const FacilityType &existingFacility : facilitiesOptions)
     {
-        if (!(existingFacility == facility))
+        if (existingFacility.getName() == facility.getName())
         {
-            std::cout << "Error: Facility already exists in the facilityOptions vector." << std::endl;
+            std::cout << "Facility already exists" << std::endl; // to delete later
             return false; // Facility cannot be added
         }
     }
     facilitiesOptions.push_back(facility);
-    std::cout << "Facility added to facilityOptions vector." << std::endl;
+    std::cout << "Facility added to facilityOptions vector." << std::endl; // to delete later
     return true;
 }
 
@@ -181,6 +191,18 @@ bool Simulation::isSettlementExists(const string &settlementName)
     for (Settlement *settlement : settlements)
     {
         if (settlement->getName() == settlementName)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Simulation::isPlanExists(const int planID)
+{
+    for (Plan currPlan : plans)
+    {
+        if (currPlan.getPlanID() == planID)
         {
             return true;
         }
@@ -229,6 +251,11 @@ const vector<Settlement *> &Simulation::getSettlements() const
     return settlements;
 }
 
+const vector<BaseAction *> &Simulation::getActionsLog() const
+{
+    return actionsLog;
+}
+
 const int Simulation::getNextPlanID() const
 {
     return planCounter;
@@ -237,16 +264,15 @@ const int Simulation::getNextPlanID() const
 // executes a single step in the simulation
 void Simulation::step()
 {
-    std::cout << "Enter the number of steps to take: " << std::endl;
-    int numberOfSteps;
-    std::cin >> numberOfSteps;
-    SimulateStep curr(numberOfSteps);
-    actionsLog.push_back(&curr);
-    curr.act(*this);
+    for (Plan &plan : plans)
+    {
+        plan.step();
+    }
 }
 
 // closes the simulation after applying changes and a save, printing the actions done at last
 void Simulation::close() {}
 
-// the fk is this too??
-void Simulation::open() {}
+void Simulation::open() {
+    isRunning = true;
+}

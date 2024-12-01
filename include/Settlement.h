@@ -18,6 +18,7 @@ class Settlement {
         const string &getName() const;
         SettlementType getType() const;
         const string toString() const;
+        const string typeToString() const;
         const int getConstructionLimit() const;
 
         private:

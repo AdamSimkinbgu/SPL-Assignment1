@@ -61,9 +61,18 @@ const int Plan::getPlanID() const
     return plan_id;
 }
 
+SelectionPolicy *Plan::getSelectionPolicy() const
+{
+    return selectionPolicy;
+}
+
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
-    this->selectionPolicy = selectionPolicy; // maybe change later
+    std::cout << "planId: " << this->plan_id << std::endl;
+    std::cout << "previusPolicy: " << this->selectionPolicy << std::endl;
+    this->selectionPolicy = selectionPolicy;
+    std::cout << "newPolicy: " << this->selectionPolicy->fullToString() << std::endl;
+
 }
 
 void Plan::step()
@@ -123,5 +132,26 @@ const Settlement &Plan::getSettlement() const
 {
     return settlement;
 }
+ 
+string Plan::printAllFacilities() const
+{   
+    string facilities_str = "";
+    for (Facility *facility : facilities)
+    {
+        facilities_str += "\n" + facility->toString();
+    }
+    for (Facility *facility : underConstruction)
+    {
+        facilities_str += "\n" + facility->toString();
+    }
+    return facilities_str;
+}
 
-const string Plan::toString() const {}
+const string Plan::toString() const 
+{
+    return "planId: " + std::to_string(this->plan_id) + " settlementName " + this->settlement.getName() + 
+    "\n" + "planStatus: " + (this->status == PlanStatus::AVALIABLE ? "AVALIABLE" : "BUSY") + "\n" + 
+    "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) + 
+    "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) + 
+    printAllFacilities();
+}

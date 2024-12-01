@@ -13,12 +13,14 @@ class BaseAction{
     public:
         BaseAction();
         ActionStatus getStatus() const;
+        string getActionStatus() const;
         virtual void act(Simulation& simulation)=0;
         virtual const string toString() const=0;
         virtual BaseAction* clone() const = 0;
         virtual ~BaseAction() = default;
 
     protected:
+        SelectionPolicy *getSelectionPolicy(const string &selectionPolicy);
         void complete();
         void error(string errorMsg);
         const string &getErrorMsg() const;
@@ -55,6 +57,7 @@ class AddSettlement : public BaseAction {
         AddSettlement(const string &settlementName,SettlementType settlementType);
         void act(Simulation &simulation) override;
         AddSettlement *clone() const override;
+        
         const string toString() const override;
     private:
         const string settlementName;
@@ -69,6 +72,8 @@ class AddFacility : public BaseAction {
         void act(Simulation &simulation) override;
         AddFacility *clone() const override;
         const string toString() const override;
+        const string facilitycat;
+
     private:
         const string facilityName;
         const FacilityCategory facilityCategory;

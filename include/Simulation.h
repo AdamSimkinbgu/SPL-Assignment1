@@ -20,6 +20,7 @@ public:
     bool addSettlement(Settlement *settlement);
     bool addFacility(FacilityType facility);
     bool isSettlementExists(const string &settlementName);
+    bool isPlanExists(const int planID);
     Settlement &getSettlement(const string &settlementName);
     Plan &getPlan(const int planID);
     void addSettlementFromConfig(std::vector<std::string>);
@@ -27,6 +28,7 @@ public:
     void addPlanFromConfig(std::vector<std::string>);
     const vector<Plan> &getPlans() const;
     const vector<Settlement *> &getSettlements() const;
+    const vector<BaseAction *> &getActionsLog() const;
     const int getNextPlanID() const;
     void step();
     void close();

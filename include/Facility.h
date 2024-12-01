@@ -52,6 +52,7 @@ public:
     const FacilityStatus &getStatus() const;
     const string toString() const;
     void reduceTimeLeft();
+    const string getStringStatus() const;
 
 private:
     const string settlementName;
