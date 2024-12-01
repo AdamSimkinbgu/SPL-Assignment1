@@ -43,23 +43,21 @@ Plan &Plan::operator=(const Plan &other)
     if (this != &other)
     {
         clear();
-
+        // I'm not sure how to fix these lines, maybe I'm doing it wrong
         plan_id = other.plan_id;
-        settlement = other.getSettlement();
+        // settlement = other.settlement;
         selectionPolicy = other.selectionPolicy;
         status = other.status;
-        facilityOptions = other.facilityOptions;
+        // facilityOptions = other.facilityOptions;
         life_quality_score = other.life_quality_score;
         economy_score = other.economy_score;
         environment_score = other.environment_score;
 
-        // Deep copy of facilities
         for (auto facility : other.facilities)
         {
             facilities.push_back(new Facility(*facility));
         }
 
-        // Deep copy of underConstruction
         for (auto facility : other.underConstruction)
         {
             underConstruction.push_back(new Facility(*facility));
@@ -107,11 +105,9 @@ Plan &Plan::operator=(Plan &&other) noexcept
 
 void Plan::clear()
 {
-    // Clean up dynamically allocated selectionPolicy
     delete selectionPolicy;
     selectionPolicy = nullptr;
 
-    // Clean up dynamically allocated facilities
     for (auto facility : facilities)
     {
         delete facility;

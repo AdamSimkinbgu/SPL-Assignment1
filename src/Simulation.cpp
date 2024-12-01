@@ -59,16 +59,14 @@ Simulation::Simulation(const Simulation &other)
       plans(other.plans),
       facilitiesOptions(other.facilitiesOptions)
 {
-    // Deep copy of settlements
     for (auto settlement : other.settlements)
     {
         settlements.push_back(new Settlement(*settlement));
     }
 
-    // Deep copy of actionsLog
     for (auto action : other.actionsLog)
     {
-        actionsLog.push_back(action->clone()); // Assuming BaseAction has a `clone()` method
+        actionsLog.push_back(action->clone());
     }
 }
 
@@ -83,16 +81,14 @@ Simulation &Simulation::operator=(const Simulation &other)
         plans = other.plans;
         facilitiesOptions = other.facilitiesOptions;
 
-        // Deep copy of settlements
         for (auto settlement : other.settlements)
         {
             settlements.push_back(new Settlement(*settlement));
         }
 
-        // Deep copy of actionsLog
         for (auto action : other.actionsLog)
         {
-            actionsLog.push_back(action->clone()); // Assuming BaseAction has a `clone()` method
+            actionsLog.push_back(action->clone());
         }
     }
     return *this;
