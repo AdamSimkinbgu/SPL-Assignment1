@@ -14,6 +14,11 @@ Plan::Plan(const int planId, const Settlement &settlement,
       economy_score(0),
       environment_score(0) {};
 
+Plan::~Plan()
+{
+    clear();
+}
+
 Plan::Plan(const Plan &plan) : plan_id(plan.plan_id),
                                settlement(plan.settlement),
                                selectionPolicy(plan.selectionPolicy),
@@ -31,6 +36,93 @@ Plan::Plan(const Plan &plan) : plan_id(plan.plan_id),
     {
         underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
     }
+}
+
+Plan &Plan::operator=(const Plan &other)
+{
+    if (this != &other)
+    {
+        clear();
+
+        plan_id = other.plan_id;
+        settlement = other.getSettlement();
+        selectionPolicy = other.selectionPolicy;
+        status = other.status;
+        facilityOptions = other.facilityOptions;
+        life_quality_score = other.life_quality_score;
+        economy_score = other.economy_score;
+        environment_score = other.environment_score;
+
+        // Deep copy of facilities
+        for (auto facility : other.facilities)
+        {
+            facilities.push_back(new Facility(*facility));
+        }
+
+        // Deep copy of underConstruction
+        for (auto facility : other.underConstruction)
+        {
+            underConstruction.push_back(new Facility(*facility));
+        }
+    }
+    return *this;
+}
+
+Plan::Plan(Plan &&other) noexcept
+    : plan_id(other.plan_id),
+      settlement(other.settlement),
+      selectionPolicy(other.selectionPolicy),
+      status(other.status),
+      facilities(std::move(other.facilities)),
+      underConstruction(std::move(other.underConstruction)),
+      facilityOptions(other.facilityOptions),
+      life_quality_score(other.life_quality_score),
+      economy_score(other.economy_score),
+      environment_score(other.environment_score)
+{
+    other.selectionPolicy = nullptr;
+}
+
+Plan &Plan::operator=(Plan &&other) noexcept
+{
+    if (this != &other)
+    {
+        clear();
+
+        plan_id = other.plan_id;
+        settlement = other.settlement;
+        selectionPolicy = other.selectionPolicy;
+        status = other.status;
+        facilities = std::move(other.facilities);
+        underConstruction = std::move(other.underConstruction);
+        facilityOptions = other.facilityOptions;
+        life_quality_score = other.life_quality_score;
+        economy_score = other.economy_score;
+        environment_score = other.environment_score;
+
+        other.selectionPolicy = nullptr;
+    }
+    return *this;
+}
+
+void Plan::clear()
+{
+    // Clean up dynamically allocated selectionPolicy
+    delete selectionPolicy;
+    selectionPolicy = nullptr;
+
+    // Clean up dynamically allocated facilities
+    for (auto facility : facilities)
+    {
+        delete facility;
+    }
+    facilities.clear();
+
+    for (auto facility : underConstruction)
+    {
+        delete facility;
+    }
+    underConstruction.clear();
 }
 
 vector<FacilityType> Plan::copyFacilityOptions(const vector<FacilityType> &facilityOptions)
@@ -72,7 +164,6 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
     std::cout << "previusPolicy: " << this->selectionPolicy << std::endl;
     this->selectionPolicy = selectionPolicy;
     std::cout << "newPolicy: " << this->selectionPolicy->fullToString() << std::endl;
-
 }
 
 void Plan::step()
@@ -132,9 +223,9 @@ const Settlement &Plan::getSettlement() const
 {
     return settlement;
 }
- 
+
 string Plan::printAllFacilities() const
-{   
+{
     string facilities_str = "";
     for (Facility *facility : facilities)
     {
@@ -147,11 +238,11 @@ string Plan::printAllFacilities() const
     return facilities_str;
 }
 
-const string Plan::toString() const 
+const string Plan::toString() const
 {
-    return "planId: " + std::to_string(this->plan_id) + " settlementName " + this->settlement.getName() + 
-    "\n" + "planStatus: " + (this->status == PlanStatus::AVALIABLE ? "AVALIABLE" : "BUSY") + "\n" + 
-    "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) + 
-    "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) + 
-    printAllFacilities();
+    return "planId: " + std::to_string(this->plan_id) + " settlementName " + this->settlement.getName() +
+           "\n" + "planStatus: " + (this->status == PlanStatus::AVALIABLE ? "AVALIABLE" : "BUSY") + "\n" +
+           "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) +
+           "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) +
+           printAllFacilities();
 }
