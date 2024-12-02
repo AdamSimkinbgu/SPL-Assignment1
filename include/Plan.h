@@ -31,6 +31,7 @@ public:
     vector<FacilityType> copyFacilityOptions(const vector<FacilityType> &facilityOptions);
     const Settlement &getSettlement() const;
     string printAllFacilities() const;
+    void printbeforeclosed() const;
 
 private:
     int plan_id;

@@ -285,7 +285,9 @@ const string PrintActionsLog::toString() const {
 
 Close::Close() {}
 
-void Close::act(Simulation &simulation) {}
+void Close::act(Simulation &simulation) {
+    simulation.close();
+}
 
 Close *Close::clone() const {}
 

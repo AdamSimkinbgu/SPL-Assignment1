@@ -135,16 +135,16 @@ const Settlement &Plan::getSettlement() const
  
 string Plan::printAllFacilities() const
 {   
-    string facilities_str = "";
+    string facilitiesStr = "";
     for (Facility *facility : facilities)
     {
-        facilities_str += "\n" + facility->toString();
+        facilitiesStr += "\n" + facility->toString();
     }
     for (Facility *facility : underConstruction)
     {
-        facilities_str += "\n" + facility->toString();
+        facilitiesStr += "\n" + facility->toString();
     }
-    return facilities_str;
+    return facilitiesStr;
 }
 
 const string Plan::toString() const 
@@ -154,4 +154,14 @@ const string Plan::toString() const
     "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) + 
     "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) + 
     printAllFacilities();
+}
+
+void Plan::printbeforeclosed() const
+{
+    std::cout << "planId: " << plan_id << std::endl;
+    std::cout << "settlementName "<< settlement.getName() << std::endl;
+    std::cout << "LifeQuality_Score: "<< life_quality_score << std::endl;
+    std::cout << "Economy_Score: "<< economy_score <<std::endl;
+    std::cout << "Environment_Score: "<< environment_score <<std::endl;
+    delete this;
 }

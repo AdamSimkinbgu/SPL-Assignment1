@@ -271,7 +271,13 @@ void Simulation::step()
 }
 
 // closes the simulation after applying changes and a save, printing the actions done at last
-void Simulation::close() {}
+void Simulation::close() {
+    for (Plan p: plans)
+    {
+        p.printbeforeclosed();
+    }
+    isRunning = false;
+}
 
 void Simulation::open() {
     isRunning = true;
