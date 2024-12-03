@@ -21,13 +21,13 @@ Plan::~Plan()
 
 Plan::Plan(const Plan &plan) : plan_id(plan.plan_id),
                                settlement(plan.settlement),
-                               selectionPolicy(plan.selectionPolicy),
-                               facilityOptions(copyFacilityOptions(plan.facilityOptions))
+                               selectionPolicy(plan.selectionPolicy ? plan.selectionPolicy->clone() : nullptr),
+                               facilityOptions(plan.facilityOptions),
+                               status(plan.status),
+                               life_quality_score(plan.life_quality_score),
+                               economy_score(plan.economy_score),
+                               environment_score(plan.environment_score)
 {
-    status = plan.status;
-    life_quality_score = plan.life_quality_score;
-    economy_score = plan.economy_score;
-    environment_score = plan.environment_score;
     for (Facility *facility : plan.facilities)
     {
         facilities.push_back((new Facility(*facility, facility->getSettlementName())));
@@ -36,34 +36,6 @@ Plan::Plan(const Plan &plan) : plan_id(plan.plan_id),
     {
         underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
     }
-}
-
-Plan &Plan::operator=(const Plan &other)
-{
-    if (this != &other)
-    {
-        clear();
-        // I'm not sure how to fix these lines, maybe I'm doing it wrong
-        plan_id = other.plan_id;
-        // settlement = other.settlement;
-        selectionPolicy = other.selectionPolicy;
-        status = other.status;
-        // facilityOptions = other.facilityOptions;
-        life_quality_score = other.life_quality_score;
-        economy_score = other.economy_score;
-        environment_score = other.environment_score;
-
-        for (auto facility : other.facilities)
-        {
-            facilities.push_back(new Facility(*facility));
-        }
-
-        for (auto facility : other.underConstruction)
-        {
-            underConstruction.push_back(new Facility(*facility));
-        }
-    }
-    return *this;
 }
 
 Plan::Plan(Plan &&other) noexcept
@@ -81,70 +53,48 @@ Plan::Plan(Plan &&other) noexcept
     other.selectionPolicy = nullptr;
 }
 
-Plan &Plan::operator=(Plan &&other) noexcept
-{
-    if (this != &other)
-    {
-        clear();
-
-        plan_id = other.plan_id;
-        settlement = other.settlement;
-        selectionPolicy = other.selectionPolicy;
-        status = other.status;
-        facilities = std::move(other.facilities);
-        underConstruction = std::move(other.underConstruction);
-        facilityOptions = other.facilityOptions;
-        life_quality_score = other.life_quality_score;
-        economy_score = other.economy_score;
-        environment_score = other.environment_score;
-
-        other.selectionPolicy = nullptr;
-    }
-    return *this;
-}
-
 void Plan::clear()
 {
     delete selectionPolicy;
     selectionPolicy = nullptr;
 
-    for (auto facility : facilities)
+    for (auto *facility : facilities)
     {
         delete facility;
     }
     facilities.clear();
 
-    for (auto facility : underConstruction)
+    for (auto *facility : underConstruction)
     {
         delete facility;
     }
     underConstruction.clear();
 }
 
-vector<FacilityType> Plan::copyFacilityOptions(const vector<FacilityType> &facilityOptions)
-{
-    vector<FacilityType> clonedFacilityOptions;
-    for (const FacilityType facilityType : facilityOptions)
-    {
-        (clonedFacilityOptions.push_back(facilityType));
-    }
-    return clonedFacilityOptions;
-}
+// vector<FacilityType> Plan::copyFacilityOptions(const vector<FacilityType> &facilityOptions)
+// {
+//     vector<FacilityType> clonedFacilityOptions;
+//     for (const FacilityType facilityType : facilityOptions)
+//     {
+//         (clonedFacilityOptions.push_back(facilityType));
+//     }
+//     return clonedFacilityOptions;
+// }
 
-const int Plan::getlifeQualityScore() const
+int Plan::getlifeQualityScore() const
 {
     return life_quality_score;
 }
-const int Plan::getEconomyScore() const
+int Plan::getEconomyScore() const
 {
     return economy_score;
 }
-const int Plan::getEnvironmentScore() const
+int Plan::getEnvironmentScore() const
 {
     return environment_score;
 }
 
-const int Plan::getPlanID() const
+int Plan::getPlanID() const
 {
     return plan_id;
 }
@@ -158,6 +108,7 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
     std::cout << "planId: " << this->plan_id << std::endl;
     std::cout << "previusPolicy: " << this->selectionPolicy << std::endl;
+    delete this->selectionPolicy;
     this->selectionPolicy = selectionPolicy;
     std::cout << "newPolicy: " << this->selectionPolicy->fullToString() << std::endl;
 }
@@ -167,6 +118,9 @@ void Plan::step()
     while (underConstruction.size() < settlement.getConstructionLimit())
     {
         FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
+        life_quality_score += selectedFacility.getLifeQualityScore();
+        economy_score += selectedFacility.getEconomyScore();
+        environment_score += selectedFacility.getEnvironmentScore();
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
     }
     for (int i = 0; i < underConstruction.size(); i++)
@@ -202,12 +156,7 @@ void Plan::printStatus()
 
 const vector<Facility *> &Plan::getFacilities() const
 {
-    vector<Facility *> facilities_copy;
-    for (auto &facility : facilities)
-    {
-        facilities_copy.push_back(new Facility(*facility, facility->getSettlementName()));
-    }
-    return facilities_copy;
+    return facilities;
 }
 
 void Plan::addFacility(Facility *facility)
@@ -250,5 +199,4 @@ void Plan::printbeforeclosed() const
     std::cout << "LifeQuality_Score: " << life_quality_score << std::endl;
     std::cout << "Economy_Score: " << economy_score << std::endl;
     std::cout << "Environment_Score: " << environment_score << std::endl;
-    delete this;
 }

@@ -21,7 +21,6 @@ class FacilityType
 {
 public:
     FacilityType(const string &name, const FacilityCategory category, const int price, const int lifeQuality_score, const int economy_score, const int environment_score);
-    virtual ~FacilityType();
     const string &getName() const;
     int getCost() const;
     int getLifeQualityScore() const;
@@ -44,11 +43,10 @@ class Facility : public FacilityType
 
 public:
     Facility(const string &name, const string &settlementName, const FacilityCategory category, const int price, const int lifeQuality_score, const int economy_score, const int environment_score);
-    ~Facility();
     Facility(const FacilityType &type, const string &settlementName);
     bool operator==(const Facility &other) const;
     const string &getSettlementName() const;
-    const int getTimeLeft() const;
+    int getTimeLeft() const;
     FacilityStatus step();
     void setStatus(FacilityStatus status);
     const FacilityStatus &getStatus() const;

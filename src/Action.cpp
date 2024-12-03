@@ -6,6 +6,7 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
+
 ActionStatus BaseAction::getStatus() const
 {
     return status;
@@ -87,8 +88,9 @@ SimulateStep *SimulateStep::clone() const
 
 // ################################################################################################################################################
 
-AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : settlementName(settlementName),
-                                                                                selectionPolicy(selectionPolicy) {};
+AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : 
+settlementName(settlementName),
+selectionPolicy(selectionPolicy) {}
 
 void AddPlan::act(Simulation &simulation)
 {
@@ -136,7 +138,7 @@ void AddSettlement::act(Simulation &simulation)
     else
     {
         error("Settlement already exists");
-    };
+    }
     simulation.addAction(this);
     // delete newSettle?;
 }
@@ -163,18 +165,20 @@ AddFacility::AddFacility(const string &facilityName, const FacilityCategory faci
                                                        lifeQualityScore(lifeQualityScore),
                                                        economyScore(economyScore),
                                                        environmentScore(environmentScore)
-{
+{}
+
+string AddFacility::facilitycatrep() const {
     if (facilityCategory == FacilityCategory::ECONOMY)
     {
-        string facilitycat = "ECONOMY";
+        return "ECONOMY";
     }
     else if (facilityCategory == FacilityCategory::LIFE_QUALITY)
     {
-        string facilitycat = "LIFE_QUALITY";
+        return "LIFE_QUALITY";
     }
     else
     {
-        string facilitycat = "ENVIRONMENT";
+        return "ENVIRONMENT";
     }
 }
 
@@ -188,7 +192,7 @@ void AddFacility::act(Simulation &simulation)
     else
     {
         error("Facility already exists");
-    };
+    }
     simulation.addAction(this);
     // delete facil?;
 }
@@ -200,7 +204,7 @@ AddFacility *AddFacility::clone() const
 
 const string AddFacility::toString() const
 {
-    return "facility" + this->facilityName + this->facilitycat +
+    return "facility" + this->facilityName + facilitycatrep() +
            std::to_string(this->price) +
            std::to_string(this->lifeQualityScore) +
            std::to_string(this->economyScore) +
@@ -314,9 +318,13 @@ void Close::act(Simulation &simulation) {
     simulation.close();
 }
 
-Close *Close::clone() const {}
+Close *Close::clone() const {
+    return new Close(*this);
+}
 
-const string Close::toString() const {}
+const string Close::toString() const {
+    return "Close " + getActionStatus();
+}
 
 // ################################################################################################################################################
 
@@ -324,12 +332,19 @@ BackupSimulation::BackupSimulation() {}
 
 void BackupSimulation::act(Simulation &simulation)
 {
-    backup = &simulation;
+    delete backup;
+    backup = new Simulation(simulation);
+    simulation.addAction(this);
+
 }
 
-BackupSimulation *BackupSimulation::clone() const {}
+BackupSimulation *BackupSimulation::clone() const {
+    return new BackupSimulation(*this);
+}
 
-const string BackupSimulation::toString() const {}
+const string BackupSimulation::toString() const {
+    return "backup " + getActionStatus();
+}
 
 // ################################################################################################################################################
 
@@ -337,9 +352,22 @@ RestoreSimulation::RestoreSimulation() {}
 
 void RestoreSimulation::act(Simulation &simulation)
 {
-    simulation = *backup;
+    if (backup != nullptr)
+    {
+        simulation = *backup;
+        complete();
+    }
+    else
+    {
+        error("No backup available");
+    }
+    simulation.addAction(this);
 }
 
-RestoreSimulation *RestoreSimulation::clone() const {}
+RestoreSimulation *RestoreSimulation::clone() const {
+    return new RestoreSimulation(*this);
+}
 
-const string RestoreSimulation::toString() const {}
+const string RestoreSimulation::toString() const {
+    return "restore " + getActionStatus();
+}

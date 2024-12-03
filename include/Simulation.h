@@ -34,7 +34,7 @@ public:
     const vector<Plan> &getPlans() const;
     const vector<Settlement *> &getSettlements() const;
     const vector<BaseAction *> &getActionsLog() const;
-    const int getNextPlanID() const;
+    int getNextPlanID() const;
     void step();
     void close();
     void open();
@@ -42,8 +42,8 @@ public:
 private:
     bool isRunning;
     int planCounter; // For assigning unique plan IDs
-    vector<BaseAction *> actionsLog;
     vector<Plan> plans;
+    vector<BaseAction *> actionsLog;
     vector<Settlement *> settlements;
     vector<FacilityType> facilitiesOptions;
     void clear();

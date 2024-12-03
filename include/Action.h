@@ -72,7 +72,7 @@ class AddFacility : public BaseAction {
         void act(Simulation &simulation) override;
         AddFacility *clone() const override;
         const string toString() const override;
-        const string facilitycat;
+        string facilitycatrep() const;
 
     private:
         const string facilityName;
