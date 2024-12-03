@@ -4,7 +4,13 @@
 #include <iostream>
 using std::string;
 
-Simulation::Simulation(const string &config_file_path) : isRunning(false), planCounter(0)
+Simulation::Simulation(const string &config_file_path) : 
+isRunning(false), 
+planCounter(0),
+plans(),
+actionsLog(),
+settlements(),
+facilitiesOptions()
 {
     std::cout << "The simulation has started" << std::endl;
     std::ifstream configFile(config_file_path);
@@ -46,6 +52,98 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false), planC
 
     configFile.close();
     std::cout << "Simulation object created" << std::endl;
+}
+
+Simulation::~Simulation()
+{
+    clear();
+}
+
+Simulation::Simulation(const Simulation &other): 
+isRunning(other.isRunning),
+planCounter(other.planCounter),
+plans(other.plans),
+facilitiesOptions(other.facilitiesOptions)
+{
+    for (auto settlement : other.settlements)
+    {
+        settlements.push_back(new Settlement(*settlement));
+    }
+
+    for (auto action : other.actionsLog)
+    {
+        actionsLog.push_back(action->clone());
+    }
+}
+
+Simulation &Simulation::operator=(const Simulation &other)
+{
+    if (this != &other)
+    {
+        clear();
+
+        isRunning = other.isRunning;
+        planCounter = other.planCounter;
+        plans = other.plans;
+        facilitiesOptions = other.facilitiesOptions;
+
+        for (auto settlement : other.settlements)
+        {
+            settlements.push_back(new Settlement(*settlement));
+        }
+
+        for (auto action : other.actionsLog)
+        {
+            actionsLog.push_back(action->clone());
+        }
+    }
+    return *this;
+}
+
+Simulation::Simulation(Simulation &&other) noexcept
+    : settlements(std::move(other.settlements)),
+      actionsLog(std::move(other.actionsLog)),
+      plans(std::move(other.plans)),
+      facilitiesOptions(std::move(other.facilitiesOptions)),
+      isRunning(other.isRunning),
+      planCounter(other.planCounter)
+{
+    other.isRunning = false;
+    other.planCounter = 0;
+}
+
+Simulation &Simulation::operator=(Simulation &&other) noexcept
+{
+    if (this != &other)
+    {
+        clear();
+
+        isRunning = other.isRunning;
+        planCounter = other.planCounter;
+        actionsLog = std::move(other.actionsLog);
+        plans = std::move(other.plans);
+        settlements = std::move(other.settlements);
+        facilitiesOptions = std::move(other.facilitiesOptions);
+
+        other.isRunning = false;
+        other.planCounter = 0;
+    }
+    return *this;
+}
+
+void Simulation::clear()
+{
+    for (auto settlement : settlements)
+    {
+        delete settlement;
+    }
+    settlements.clear();
+
+    for (auto action : actionsLog)
+    {
+        delete action;
+    }
+    actionsLog.clear();
 }
 
 void Simulation::addSettlementFromConfig(std::vector<std::string> args)
@@ -116,15 +214,67 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
 // this function will start the simulation process
 void Simulation::start()
 {
-    isRunning = true;
-    std::cout << "Simulation mode 'isRunning' is set to True" << std::endl;
+    open();
+    while (isRunning)
+    {
+        std::string command;
+        std::cin >> command;
+        vector <string> commandArgs = Auxiliary::parseArguments(command);
+        if (commandArgs[0] == "step")
+        {
+            SimulateStep step(std::stoi(commandArgs[1]));
+            step.act(*this);
+        }
+        else if (commandArgs[0] == "plan")
+        {
+            AddPlan addPlan(commandArgs[1], commandArgs[2]);
+            addPlan.act(*this);
+        }
+        else if (commandArgs[0] == "settlement"){
+            AddSettlement addSettlement(commandArgs[1], commandArgs[2] == "0" ? SettlementType::VILLAGE : commandArgs[2] == "1" ? SettlementType::CITY : SettlementType::METROPOLIS);
+            addSettlement.act(*this);
+        }
+        else if (commandArgs[0] == "facility"){
+            FacilityCategory category = commandArgs[2] == "0" ? FacilityCategory::ECONOMY : commandArgs[2] == "1" ? FacilityCategory::LIFE_QUALITY : FacilityCategory::ENVIRONMENT;
+            int price = std::stoi(commandArgs[3]);
+            int lifeQualityScore = std::stoi(commandArgs[4]);
+            int economyScore = std::stoi(commandArgs[5]);
+            int environmentScore = std::stoi(commandArgs[6]);
+            AddFacility addFacility(commandArgs[1], category, price, lifeQualityScore, economyScore, environmentScore);
+            addFacility.act(*this);
+        }
+        else if (commandArgs[0] == "planStatus"){
+            PrintPlanStatus printPlanStatus(std::stoi(commandArgs[1]));
+            printPlanStatus.act(*this);
+        }
+        else if(commandArgs[0] == "changePolicy"){
+            ChangePlanPolicy changePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
+            changePlanPolicy.act(*this);
+        }
+        else if(commandArgs[0] == "printActionsLog"){
+            PrintActionsLog printActionsLog;
+            printActionsLog.act(*this);
+        }
+        else if(commandArgs[0] == "close"){
+            Close close;
+            close.act(*this);
+        }
+        else if(commandArgs[0] == "backup"){
+            BackupSimulation backup;
+            backup.act(*this);
+        }
+        else if(commandArgs[0] == "restore"){
+            RestoreSimulation restore;
+            restore.act(*this);
+        }
+    }
 }
 
 // here we will be adding a new facility into the vector - conditions applied
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
 {
     // settlement name needs to be checked before the call to this function
-    if (!selectionPolicy) //is this realy nessesary? we do it in AddPlan::act
+    if (!selectionPolicy) // is this realy nessesary? we do it in AddPlan::act
     {
         std::cout << "Error: Selection policy is null" << std::endl;
         return;
@@ -138,7 +288,7 @@ void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectio
 // wtf is this? I think this is how it's supposed to be
 void Simulation::addAction(BaseAction *action)
 {
-    if (!action)// not needed also i think
+    if (!action) // not needed also i think
     {
         std::cout << "Error: Action points to null." << std::endl;
         return;
@@ -156,7 +306,7 @@ bool Simulation::addSettlement(Settlement *settlement)
         std::cout << "Error: Settlement points to null." << std::endl;
         return false;
     }
-    for (Settlement * exsistsSettlement: settlements)
+    for (Settlement *exsistsSettlement : settlements)
     {
         if (exsistsSettlement->getName() == settlement->getName())
         {
@@ -177,7 +327,7 @@ bool Simulation::addFacility(FacilityType facility)
         if (existingFacility.getName() == facility.getName())
         {
             std::cout << "Facility already exists" << std::endl; // to delete later
-            return false; // Facility cannot be added
+            return false;                                        // Facility cannot be added
         }
     }
     facilitiesOptions.push_back(facility);
@@ -213,11 +363,11 @@ bool Simulation::isPlanExists(const int planID)
 // given a name of a settlement, returns the address to it
 Settlement &Simulation::getSettlement(const string &settlementName)
 {
-    for (Settlement *settlement : settlements)
+    for (auto &currSettlement : settlements)
     {
-        if (settlement->getName() == settlementName)
+        if (currSettlement->getName() == settlementName)
         {
-            return *settlement;
+            return *currSettlement;
         }
     }
 }
@@ -225,16 +375,17 @@ Settlement &Simulation::getSettlement(const string &settlementName)
 // given the plan id, returns the address to it
 Plan &Simulation::getPlan(const int planID)
 {
-    for (Plan currPlan : plans)
+    for (auto &currPlan : plans)
     {
         if (currPlan.getPlanID() == planID)
         {
             return currPlan;
         }
     }
+    std::cout << "Plan not found" << std::endl;
 }
 
-const PlanStatus Plan::getPlanStatus() const
+PlanStatus Plan::getPlanStatus() const
 {
     return status;
 }
@@ -256,7 +407,7 @@ const vector<BaseAction *> &Simulation::getActionsLog() const
     return actionsLog;
 }
 
-const int Simulation::getNextPlanID() const
+int Simulation::getNextPlanID() const
 {
     return planCounter;
 }
@@ -272,13 +423,14 @@ void Simulation::step()
 
 // closes the simulation after applying changes and a save, printing the actions done at last
 void Simulation::close() {
-    for (Plan p: plans)
-    {
-        p.printbeforeclosed();
+    for (auto it = plans.begin(); it != plans.end(); it++){
+        it->printbeforeclosed();
+        plans.erase(it);
     }
     isRunning = false;
 }
 
-void Simulation::open() {
+void Simulation::open()
+{
     isRunning = true;
 }

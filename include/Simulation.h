@@ -14,6 +14,11 @@ class Simulation
 {
 public:
     Simulation(const string &configFilePath);
+    ~Simulation();
+    Simulation(const Simulation &other);
+    Simulation &operator=(const Simulation &other);
+    Simulation(Simulation &&other) noexcept;
+    Simulation &operator=(Simulation &&other) noexcept;
     void start();
     void addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy);
     void addAction(BaseAction *action);
@@ -29,7 +34,7 @@ public:
     const vector<Plan> &getPlans() const;
     const vector<Settlement *> &getSettlements() const;
     const vector<BaseAction *> &getActionsLog() const;
-    const int getNextPlanID() const;
+    int getNextPlanID() const;
     void step();
     void close();
     void open();
@@ -37,8 +42,9 @@ public:
 private:
     bool isRunning;
     int planCounter; // For assigning unique plan IDs
-    vector<BaseAction *> actionsLog;
     vector<Plan> plans;
+    vector<BaseAction *> actionsLog;
     vector<Settlement *> settlements;
     vector<FacilityType> facilitiesOptions;
+    void clear();
 };

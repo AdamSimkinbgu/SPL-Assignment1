@@ -46,7 +46,7 @@ public:
     Facility(const FacilityType &type, const string &settlementName);
     bool operator==(const Facility &other) const;
     const string &getSettlementName() const;
-    const int getTimeLeft() const;
+    int getTimeLeft() const;
     FacilityStatus step();
     void setStatus(FacilityStatus status);
     const FacilityStatus &getStatus() const;

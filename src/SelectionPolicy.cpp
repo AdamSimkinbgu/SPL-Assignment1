@@ -1,4 +1,4 @@
-#include <SelectionPolicy.h>
+#include "SelectionPolicy.h"
 #include <iostream>
 
 bool SelectionPolicy::operator==(const SelectionPolicy &other) const
@@ -10,22 +10,18 @@ bool SelectionPolicy::operator==(const SelectionPolicy &other) const
 
 NaiveSelection::NaiveSelection()
 {
-    lastSelectedIndex = NULL;
+    lastSelectedIndex = -1;
 }
 
 const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
-    if (this->lastSelectedIndex == NULL)
+    if (this->lastSelectedIndex == facilitiesOptions.size())
     {
         this->lastSelectedIndex = 0;
     }
     else
     {
         this->lastSelectedIndex++;
-    }
-    if (this->lastSelectedIndex == facilitiesOptions.size())
-    {
-        this->lastSelectedIndex = 0;
     }
     return facilitiesOptions[this->lastSelectedIndex];
 }
@@ -43,11 +39,6 @@ const string NaiveSelection::fullToString() const
 NaiveSelection *NaiveSelection::clone() const
 {
     return new NaiveSelection(*this);
-}
-
-NaiveSelection::~NaiveSelection()
-{
-    lastSelectedIndex = NULL;
 }
 
 // ########################## VVV Balance Selection VVV #################################
@@ -118,35 +109,29 @@ BalancedSelection *BalancedSelection::clone() const
     return new BalancedSelection(*this);
 }
 
-BalancedSelection::~BalancedSelection() {}
-
 // ########################## VVV Economy Selection VVV #################################
 
 EconomySelection::EconomySelection()
 {
-    lastSelectedIndex = NULL;
+    lastSelectedIndex = -1;
 }
 
 const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
-    if (this->lastSelectedIndex == NULL)
-    {
-        this->lastSelectedIndex = 0;
-    }
-    else
-    {
-        this->lastSelectedIndex++;
-    }
+    lastSelectedIndex++;
     while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ECONOMY)
     {
         if (this->lastSelectedIndex == facilitiesOptions.size())
         {
             this->lastSelectedIndex = 0;
         }
-        this->lastSelectedIndex++;
+        else{
+            this->lastSelectedIndex++;
+        }
     }
     return facilitiesOptions[this->lastSelectedIndex];
 }
+
 
 const string EconomySelection::toString() const
 {
@@ -163,32 +148,25 @@ EconomySelection *EconomySelection::clone() const
     return new EconomySelection(*this);
 }
 
-EconomySelection::~EconomySelection() {}
-
 // ########################## VVV Sustainability Selection VVV ##########################
 
 SustainabilitySelection::SustainabilitySelection()
 {
-    lastSelectedIndex = NULL;
+    lastSelectedIndex = -1;
 }
 
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
-    if (this->lastSelectedIndex == NULL)
-    {
-        this->lastSelectedIndex = 0;
-    }
-    else
-    {
-        this->lastSelectedIndex++;
-    }
+    lastSelectedIndex++;
     while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ENVIRONMENT)
     {
         if (this->lastSelectedIndex == facilitiesOptions.size())
         {
             this->lastSelectedIndex = 0;
         }
+        else{
         this->lastSelectedIndex++;
+        }
     }
     return facilitiesOptions[this->lastSelectedIndex];
 }
@@ -206,5 +184,3 @@ SustainabilitySelection *SustainabilitySelection::clone() const
 {
     return new SustainabilitySelection(*this);
 }
-
-SustainabilitySelection::~SustainabilitySelection() {}

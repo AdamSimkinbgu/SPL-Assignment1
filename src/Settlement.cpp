@@ -14,7 +14,7 @@ SettlementType Settlement::getType() const{
     return type;
 };
 
-const int Settlement::getConstructionLimit() const{
+int Settlement::getConstructionLimit() const{
     switch(type){
         case SettlementType::VILLAGE:
             return 1;

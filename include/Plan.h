@@ -15,15 +15,20 @@ class Plan
 {
 public:
     Plan(const int planId, const Settlement &settlement, SelectionPolicy *selectionPolicy, const vector<FacilityType> &facilityOptions);
-    Plan(const Plan &plan);
-    const int getlifeQualityScore() const;
-    const int getEconomyScore() const;
-    const int getEnvironmentScore() const;
-    const int getPlanID() const;
-    const PlanStatus getPlanStatus() const;
+    ~Plan();
+    Plan(const Plan &other);
+    Plan &operator=(const Plan &other)=delete;
+    Plan(Plan &&other) noexcept;
+    Plan &operator=(Plan &&other) noexcept=delete;
+
+    int getlifeQualityScore() const;
+    int getEconomyScore() const;
+    int getEnvironmentScore() const;
+    int getPlanID() const;
     SelectionPolicy *getSelectionPolicy() const;
     void setSelectionPolicy(SelectionPolicy *selectionPolicy);
     void step();
+    PlanStatus getPlanStatus() const;
     void printStatus();
     const vector<Facility *> &getFacilities() const;
     void addFacility(Facility *facility);
@@ -42,4 +47,5 @@ private:
     vector<Facility *> underConstruction;
     const vector<FacilityType> &facilityOptions;
     int life_quality_score, economy_score, environment_score;
+    void clear();
 };

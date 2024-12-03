@@ -1,26 +1,90 @@
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//       {
+//           "name": "Linux",
+//           "type": "cppdbg",
+//           "request": "launch",
+//           "program": "${workspaceFolder}/bin/main",
+//           "args": ["config_file.txt"],
+//           "stopAtEntry": false,
+//           "cwd": "${workspaceFolder}",
+//           "environment": [],
+//           "externalConsole": false,
+//           "MIMode": "gdb",
+//           "setupCommands": [
+//               {
+//                   "description": "Enable pretty-printing for gdb",
+//                   "text": "-enable-pretty-printing",
+//                   "ignoreFailures": true
+//               }
+//           ],
+//           "preLaunchTask": "build",
+//           "miDebuggerPath": "/usr/bin/gdb"
+//       }
+//   ]
+// }
+
+// {
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "name": "Docker Debug",
+//             "type": "cppdbg",
+//             "request": "launch",
+//             "program": "/path/to/your/executable", // Replace with the path to your compiled binary inside the container
+//             "args": [], // Arguments to pass to your program
+//             "stopAtEntry": false,
+//             "cwd": "${workspaceFolder}",
+//             "environment": [],
+//             "externalConsole": false,
+//             "MIMode": "gdb",
+//             "miDebuggerPath": "/usr/bin/gdb", // Path to GDB inside the container
+//             "setupCommands": [
+//                 {
+//                     "description": "Enable pretty-printing for gdb",
+//                     "text": "-enable-pretty-printing",
+//                     "ignoreFailures": true
+//                 }
+//             ],
+//             "preLaunchTask": "build" // Optional: Reference to a build task
+//         }
+//     ]
+// }
+
+// .vscode/launch.json
 {
-  "version": "0.2.0",
-  "configurations": [
-      {
-          "name": "Linux",
-          "type": "cppdbg",
-          "request": "launch",
-          "program": "${workspaceFolder}/bin/main",
-          "args": ["config_file.txt"],
-          "stopAtEntry": false,
-          "cwd": "${workspaceFolder}",
-          "environment": [],
-          "externalConsole": false,
-          "MIMode": "gdb",
-          "setupCommands": [
-              {
-                  "description": "Enable pretty-printing for gdb",
-                  "text": "-enable-pretty-printing",
-                  "ignoreFailures": true
-              }
-          ],
-          "preLaunchTask": "build",
-          "miDebuggerPath": "/usr/bin/gdb"
-      }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Project",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/main",
+            "args": ["config_file.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Debug",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "logging": {
+                "engineLogging": true,
+                "trace": true,
+                "traceResponse": true
+            }
+        }
+    ]
 }
+
+
+
+
