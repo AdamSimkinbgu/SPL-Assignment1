@@ -8,7 +8,7 @@ Settlement::Settlement(const string &name, SettlementType type)
 
 // Copy constructor
 Settlement::Settlement(const Settlement &settlement)
-    : name(settlement.getName()), type(settlement.getType()){}
+    : name(settlement.getName()), type(settlement.getType()) {}
 
 // Helper function to calculate the construction limit from SettlementType
 int Settlement::calculateConstructionLimit() const
@@ -37,8 +37,6 @@ SettlementType Settlement::getType() const
 {
     return type;
 }
-
-
 
 // String representation of Settlement
 const string Settlement::toString() const

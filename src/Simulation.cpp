@@ -230,7 +230,8 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
         currSP = nullptr;
     }
     const std::vector<FacilityType> facil;
-    plans.push_back(Plan(planID, currSettle, currSP, facil));
+    Plan newPlan(planID, currSettle, currSP, facil);
+    plans.push_back(newPlan);
     // delete currSP;
     std::cout << "Plan number " << planID << " added." << std::endl;
     // facil blayt
@@ -243,7 +244,7 @@ void Simulation::start()
     while (isRunning)
     {
         std::string command;
-        std::cin >> command;
+        std::getline(std::cin, command);
         vector<string> commandArgs = Auxiliary::parseArguments(command);
         if (commandArgs[0] == "step")
         {
@@ -443,9 +444,9 @@ const vector<BaseAction *> &Simulation::getActionsLog() const
     return actionsLog;
 }
 
-int Simulation::getNextPlanID() const
+int Simulation::getNextPlanID()
 {
-    return planCounter;
+    return planCounter++;
 }
 
 // executes a single step in the simulation
