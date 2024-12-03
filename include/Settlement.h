@@ -18,7 +18,7 @@ class Settlement
 public:
     Settlement(const string &name, SettlementType type);
     Settlement(const Settlement &settlement);
-    int calculateConstructionLimit(SettlementType type) const;
+    int calculateConstructionLimit() const;
     const string &getName() const;
     SettlementType getType() const;
     const string toString() const;

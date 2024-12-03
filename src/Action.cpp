@@ -1,11 +1,13 @@
 #include "Action.h"
 #include <iostream>
-#include "main.cpp"
 #include "Settlement.h"
 #include "Plan.h"
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
+extern Simulation* backup;
+
+BaseAction::BaseAction(): errorMsg(), status() {}
 
 ActionStatus BaseAction::getStatus() const
 {

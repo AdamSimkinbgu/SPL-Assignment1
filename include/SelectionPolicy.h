@@ -34,6 +34,8 @@ class BalancedSelection: public SelectionPolicy {
         virtual const string fullToString() const override;
         BalancedSelection *clone() const override;
         ~BalancedSelection() override = default;
+        int findMaxDiff(int a, int b, int c);
+        
     private:
         int LifeQualityScore;
         int EconomyScore;

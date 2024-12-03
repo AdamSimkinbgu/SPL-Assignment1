@@ -11,7 +11,7 @@ Settlement::Settlement(const Settlement &settlement)
     : name(settlement.getName()), type(settlement.getType()){}
 
 // Helper function to calculate the construction limit from SettlementType
-int Settlement::calculateConstructionLimit(SettlementType type) const
+int Settlement::calculateConstructionLimit() const
 {
     switch (type)
     {
