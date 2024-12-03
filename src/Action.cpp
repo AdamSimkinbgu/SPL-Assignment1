@@ -5,9 +5,9 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
-extern Simulation* backup;
+// extern Simulation *backup;
 
-BaseAction::BaseAction(): errorMsg(), status() {}
+BaseAction::BaseAction() : errorMsg(), status() {}
 
 ActionStatus BaseAction::getStatus() const
 {
@@ -69,7 +69,6 @@ SimulateStep::SimulateStep(const int numOfSteps) : numOfSteps(numOfSteps) {}
 
 void SimulateStep::act(Simulation &simulation)
 {
-    vector<Plan> plans = simulation.getPlans();
     for (int i = 0; i < numOfSteps; i++)
     {
         simulation.step();
@@ -90,9 +89,8 @@ SimulateStep *SimulateStep::clone() const
 
 // ################################################################################################################################################
 
-AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : 
-settlementName(settlementName),
-selectionPolicy(selectionPolicy) {}
+AddPlan::AddPlan(const string &settlementName, const string &selectionPolicy) : settlementName(settlementName),
+                                                                                selectionPolicy(selectionPolicy) {}
 
 void AddPlan::act(Simulation &simulation)
 {
@@ -167,9 +165,11 @@ AddFacility::AddFacility(const string &facilityName, const FacilityCategory faci
                                                        lifeQualityScore(lifeQualityScore),
                                                        economyScore(economyScore),
                                                        environmentScore(environmentScore)
-{}
+{
+}
 
-string AddFacility::facilitycatrep() const {
+string AddFacility::facilitycatrep() const
+{
     if (facilityCategory == FacilityCategory::ECONOMY)
     {
         return "ECONOMY";
@@ -316,15 +316,18 @@ const string PrintActionsLog::toString() const
 
 Close::Close() {}
 
-void Close::act(Simulation &simulation) {
+void Close::act(Simulation &simulation)
+{
     simulation.close();
 }
 
-Close *Close::clone() const {
+Close *Close::clone() const
+{
     return new Close(*this);
 }
 
-const string Close::toString() const {
+const string Close::toString() const
+{
     return "Close " + getActionStatus();
 }
 
@@ -334,17 +337,19 @@ BackupSimulation::BackupSimulation() {}
 
 void BackupSimulation::act(Simulation &simulation)
 {
+    extern Simulation *backup;
     delete backup;
     backup = new Simulation(simulation);
     simulation.addAction(this);
-
 }
 
-BackupSimulation *BackupSimulation::clone() const {
+BackupSimulation *BackupSimulation::clone() const
+{
     return new BackupSimulation(*this);
 }
 
-const string BackupSimulation::toString() const {
+const string BackupSimulation::toString() const
+{
     return "backup " + getActionStatus();
 }
 
@@ -354,6 +359,7 @@ RestoreSimulation::RestoreSimulation() {}
 
 void RestoreSimulation::act(Simulation &simulation)
 {
+    extern Simulation *backup;
     if (backup != nullptr)
     {
         simulation = *backup;
@@ -366,10 +372,12 @@ void RestoreSimulation::act(Simulation &simulation)
     simulation.addAction(this);
 }
 
-RestoreSimulation *RestoreSimulation::clone() const {
+RestoreSimulation *RestoreSimulation::clone() const
+{
     return new RestoreSimulation(*this);
 }
 
-const string RestoreSimulation::toString() const {
+const string RestoreSimulation::toString() const
+{
     return "restore " + getActionStatus();
 }

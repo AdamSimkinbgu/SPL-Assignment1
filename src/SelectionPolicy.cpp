@@ -1,6 +1,8 @@
 #include "SelectionPolicy.h"
 #include <iostream>
 
+SelectionPolicy::~SelectionPolicy() {}
+
 bool SelectionPolicy::operator==(const SelectionPolicy &other) const
 {
     return typeid(*this) == typeid(other);
@@ -8,8 +10,9 @@ bool SelectionPolicy::operator==(const SelectionPolicy &other) const
 
 // ########################## VVV Naive Selection VVV ###################################
 
-NaiveSelection::NaiveSelection() : lastSelectedIndex(-1) 
-{}
+NaiveSelection::NaiveSelection() : lastSelectedIndex(-1)
+{
+}
 
 const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
@@ -41,11 +44,11 @@ NaiveSelection *NaiveSelection::clone() const
 
 // ########################## VVV Balance Selection VVV #################################
 
-BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : 
-LifeQualityScore(LifeQualityScore),
-EconomyScore(EconomyScore),
-EnvironmentScore(EnvironmentScore)
-{}
+BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : LifeQualityScore(LifeQualityScore),
+                                                                                                     EconomyScore(EconomyScore),
+                                                                                                     EnvironmentScore(EnvironmentScore)
+{
+}
 
 int BalancedSelection::findMaxDiff(int a, int b, int c)
 {
@@ -91,8 +94,9 @@ BalancedSelection *BalancedSelection::clone() const
 
 // ########################## VVV Economy Selection VVV #################################
 
-EconomySelection::EconomySelection() : lastSelectedIndex(-1) 
-{}
+EconomySelection::EconomySelection() : lastSelectedIndex(-1)
+{
+}
 
 const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
@@ -103,13 +107,13 @@ const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> 
         {
             this->lastSelectedIndex = 0;
         }
-        else{
+        else
+        {
             this->lastSelectedIndex++;
         }
     }
     return facilitiesOptions[this->lastSelectedIndex];
 }
-
 
 const string EconomySelection::toString() const
 {
@@ -128,8 +132,9 @@ EconomySelection *EconomySelection::clone() const
 
 // ########################## VVV Sustainability Selection VVV ##########################
 
-SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(-1) 
-{}
+SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(-1)
+{
+}
 
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
@@ -140,8 +145,9 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
         {
             this->lastSelectedIndex = 0;
         }
-        else{
-        this->lastSelectedIndex++;
+        else
+        {
+            this->lastSelectedIndex++;
         }
     }
     return facilitiesOptions[this->lastSelectedIndex];
