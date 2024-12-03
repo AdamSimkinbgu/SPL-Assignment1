@@ -4,11 +4,11 @@ using std::string;
 
 // Main constructor
 Settlement::Settlement(const string &name, SettlementType type)
-    : name(name), type(type), constructionLimit(calculateConstructionLimit(type)) {}
+    : name(name), type(type) {}
 
 // Copy constructor
 Settlement::Settlement(const Settlement &settlement)
-    : name(settlement.name), type(settlement.type), constructionLimit(settlement.constructionLimit) {}
+    : name(settlement.getName()), type(settlement.getType()){}
 
 // Helper function to calculate the construction limit from SettlementType
 int Settlement::calculateConstructionLimit(SettlementType type) const
@@ -38,11 +38,7 @@ SettlementType Settlement::getType() const
     return type;
 }
 
-// Getter for constructionLimit
-int Settlement::getConstructionLimit() const
-{
-    return constructionLimit;
-}
+
 
 // String representation of Settlement
 const string Settlement::toString() const
