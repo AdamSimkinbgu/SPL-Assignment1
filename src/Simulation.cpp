@@ -207,7 +207,9 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
 void Simulation::addPlanFromConfig(std::vector<std::string> args)
 {
     int planID = getNextPlanID();
-    Settlement currSettle = getSettlement(args[1]);
+    // Settlement currSettle = getSettlement(args[1]);
+    Settlement &currSettle = getSettlement(args[1]);
+
     SelectionPolicy *currSP;
     if (args[2] == "env")
     {
@@ -229,8 +231,7 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
     {
         currSP = nullptr;
     }
-    const std::vector<FacilityType> facil;
-    Plan newPlan(planID, currSettle, currSP, facil);
+    Plan newPlan(planID, currSettle, currSP, facilitiesOptions);
     plans.push_back(newPlan);
     // delete currSP;
     std::cout << "Plan number " << planID << " added." << std::endl;

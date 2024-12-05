@@ -134,5 +134,5 @@ const string Facility::getStringStatus() const
 }
 const string Facility::toString() const
 {
-    return "facilityName: " + this->getName() + " facilityStatus: " + this->getStringStatus();
+    return "facilityName: " + this->getName() + "\nfacilityStatus: " + this->getStringStatus();
 }

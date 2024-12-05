@@ -8,14 +8,15 @@ Plan::Plan(const int planId, const Settlement &settlement,
     : plan_id(planId),
       settlement(settlement),
       selectionPolicy(selectionPolicy),
-      status(PlanStatus::AVALIABLE),       // Matches order in declaration
-      facilities(),                        // Explicitly initialize vectors
-      underConstruction(),                 // Explicitly initialize vectors
+      status(PlanStatus::AVALIABLE), // Matches order in declaration
+      facilities(),                  // Explicitly initialize vectors
+      underConstruction(),           // Explicitly initialize vectors
       facilityOptions(facilityOptions),
       life_quality_score(0),
       economy_score(0),
-      environment_score(0) {}
-
+      environment_score(0)
+{
+}
 
 Plan::~Plan()
 {
@@ -27,16 +28,19 @@ Plan::Plan(const Plan &plan)
       settlement(plan.settlement),
       selectionPolicy(plan.selectionPolicy ? plan.selectionPolicy->clone() : nullptr),
       status(plan.status),
-      facilities(),                        // Explicitly initialize
-      underConstruction(),                 // Explicitly initialize
+      facilities(),        // Explicitly initialize
+      underConstruction(), // Explicitly initialize
       facilityOptions(plan.facilityOptions),
       life_quality_score(plan.life_quality_score),
       economy_score(plan.economy_score),
-      environment_score(plan.environment_score) {
-    for (Facility *facility : plan.facilities) {
+      environment_score(plan.environment_score)
+{
+    for (Facility *facility : plan.facilities)
+    {
         facilities.push_back(new Facility(*facility, facility->getSettlementName()));
     }
-    for (Facility *facility : plan.underConstruction) {
+    for (Facility *facility : plan.underConstruction)
+    {
         underConstruction.push_back(new Facility(*facility, facility->getSettlementName()));
     }
 }
@@ -100,7 +104,7 @@ SelectionPolicy *Plan::getSelectionPolicy() const
 void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 {
     std::cout << "planId: " << this->plan_id << std::endl;
-    std::cout << "previusPolicy: " << this->selectionPolicy << std::endl;
+    std::cout << "previusPolicy: " << this->selectionPolicy->fullToString() << std::endl;
     delete this->selectionPolicy;
     this->selectionPolicy = selectionPolicy;
     std::cout << "newPolicy: " << this->selectionPolicy->fullToString() << std::endl;
@@ -178,7 +182,7 @@ string Plan::printAllFacilities() const
 
 const string Plan::toString() const
 {
-    return "planId: " + std::to_string(this->plan_id) + " settlementName " + this->settlement.getName() +
+    return "planId: " + std::to_string(this->plan_id) + "\nsettlementName " + this->settlement.getName() +
            "\n" + "planStatus: " + (this->status == PlanStatus::AVALIABLE ? "AVALIABLE" : "BUSY") + "\n" +
            "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) +
            "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) +
