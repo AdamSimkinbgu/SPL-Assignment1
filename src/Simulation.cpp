@@ -192,7 +192,7 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
     {
         catFacility = FacilityCategory::ECONOMY;
     }
-    else if (args[2] == "2")
+    else
     {
         catFacility = FacilityCategory::ENVIRONMENT;
     }
@@ -367,6 +367,7 @@ bool Simulation::addFacility(FacilityType facility)
             return false;                                        // Facility cannot be added
         }
     }
+
     facilitiesOptions.push_back(facility);
     std::cout << "Facility added to facilityOptions vector." << std::endl; // to delete later
     return true;

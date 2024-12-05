@@ -35,6 +35,9 @@ class BalancedSelection: public SelectionPolicy {
         BalancedSelection *clone() const override;
         ~BalancedSelection() override = default;
         int findMaxDiff(int a, int b, int c);
+        void setLifeQualityScore(int LifeQualityScore);
+        void setEconomyScore(int EconomyScore);
+        void setEnvironmentScore(int EnvironmentScore);
         
     private:
         int LifeQualityScore;

@@ -47,12 +47,26 @@ NaiveSelection *NaiveSelection::clone() const
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : LifeQualityScore(LifeQualityScore),
                                                                                                      EconomyScore(EconomyScore),
                                                                                                      EnvironmentScore(EnvironmentScore)
-{
-}
+{}
 
 int BalancedSelection::findMaxDiff(int a, int b, int c)
 {
     return std::max(std::max(a, b), c) - std::min(std::min(a, b), c);
+}
+
+void BalancedSelection::setLifeQualityScore(int LifeQualityScore)
+{
+    this->LifeQualityScore += LifeQualityScore;
+}
+
+void BalancedSelection::setEconomyScore(int EconomyScore)
+{
+    this->EconomyScore += EconomyScore;
+}
+
+void BalancedSelection::setEnvironmentScore(int EnvironmentScore)
+{
+    this->EnvironmentScore += EnvironmentScore;
 }
 
 const FacilityType &BalancedSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)

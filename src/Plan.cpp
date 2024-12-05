@@ -114,11 +114,21 @@ void Plan::step()
 {
     while ((int)underConstruction.size() < this->settlement.calculateConstructionLimit())
     {
+        // if (typeid(SelectionPolicy) == typeid(BalancedSelection)){
+            // int tempLife = life_quality_score;
+            // int tempEco = economy_score;
+            // int tempEnv = environment_score;
+        //     for (int i = 0; i < (int)underConstruction.size(); i++)
+        //     {
+        //         tempLife += underConstruction[i]->getLifeQualityScore();
+        //         tempEco += underConstruction[i]->getEconomyScore();
+        //         tempEnv += underConstruction[i]->getEnvironmentScore();
+        //     }
+        // }
         FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
-        life_quality_score += selectedFacility.getLifeQualityScore();
-        economy_score += selectedFacility.getEconomyScore();
-        environment_score += selectedFacility.getEnvironmentScore();
+        
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
+
     }
     for (int i = 0; i < (int)underConstruction.size(); i++)
     {
@@ -126,6 +136,9 @@ void Plan::step()
         if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL)
         {
             facilities.push_back(underConstruction[i]);
+            life_quality_score += underConstruction[i]->getLifeQualityScore();
+            economy_score += underConstruction[i]->getEconomyScore();
+            environment_score += underConstruction[i]->getEnvironmentScore();
             underConstruction.erase(underConstruction.begin() + i);
         }
     }
@@ -182,7 +195,7 @@ string Plan::printAllFacilities() const
 
 const string Plan::toString() const
 {
-    return "planId: " + std::to_string(this->plan_id) + "\nsettlementName " + this->settlement.getName() +
+    return "planId: " + std::to_string(this->plan_id) + "\nsettlementName: " + this->settlement.getName() +
            "\n" + "planStatus: " + (this->status == PlanStatus::AVALIABLE ? "AVALIABLE" : "BUSY") + "\n" +
            "selectionPolicy: " + selectionPolicy->toString() + "\n" + "LifeQualityScore: " + std::to_string(this->life_quality_score) +
            "\n" + "EconomyScore: " + std::to_string(this->economy_score) + "\n" + "EnvironmentScore: " + std::to_string(this->environment_score) +

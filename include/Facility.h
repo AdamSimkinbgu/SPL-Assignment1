@@ -53,7 +53,7 @@ public:
     bool operator==(const Facility &other) const;
     const string &getSettlementName() const;
     int getTimeLeft() const;
-    FacilityStatus step();
+    void step();
     void setStatus(FacilityStatus status);
     const FacilityStatus &getStatus() const;
     const string toString() const;

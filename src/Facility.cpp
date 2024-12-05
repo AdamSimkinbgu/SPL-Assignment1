@@ -97,17 +97,12 @@ void Facility::reduceTimeLeft()
     this->timeLeft--;
 }
 
-FacilityStatus Facility::step()
+void Facility::step()
 {
     reduceTimeLeft();
     if (getTimeLeft() == 0)
     {
         status = FacilityStatus::OPERATIONAL;
-        return FacilityStatus::OPERATIONAL;
-    }
-    else
-    {
-        return FacilityStatus::UNDER_CONSTRUCTIONS;
     }
 }
 
@@ -134,5 +129,5 @@ const string Facility::getStringStatus() const
 }
 const string Facility::toString() const
 {
-    return "facilityName: " + this->getName() + "\nfacilityStatus: " + this->getStringStatus();
+    return "FacilityName: " + this->getName() + "\nFacilityStatus: " + this->getStringStatus();
 }
