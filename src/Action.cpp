@@ -79,7 +79,7 @@ void SimulateStep::act(Simulation &simulation)
 
 const string SimulateStep::toString() const
 {
-    return "SimulateStep" + std::to_string(this->numOfSteps) + getActionStatus();
+    return "SimulateStep " + std::to_string(this->numOfSteps) + " " + getActionStatus();
 }
 
 SimulateStep *SimulateStep::clone() const
@@ -120,7 +120,7 @@ AddPlan *AddPlan::clone() const
 
 const string AddPlan::toString() const
 {
-    return "plan" + this->settlementName + this->selectionPolicy + getActionStatus();
+    return "plan " + this->settlementName +  " " + this->selectionPolicy + " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -152,7 +152,7 @@ const string AddSettlement::toString() const
 {
     string s = this->settlementType == SettlementType::VILLAGE ? "VILLAGE" : this->settlementType == SettlementType::CITY ? "CITY"
                                                                                                                           : "METROPOLIS";
-    return "settlement" + this->settlementName + s + getActionStatus();
+    return "settlement " + this->settlementName + " " + s + " " +  getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -206,12 +206,12 @@ AddFacility *AddFacility::clone() const
 
 const string AddFacility::toString() const
 {
-    return "facility" + this->facilityName + facilitycatrep() +
-           std::to_string(this->price) +
-           std::to_string(this->lifeQualityScore) +
-           std::to_string(this->economyScore) +
-           std::to_string(this->environmentScore) +
-           getActionStatus();
+    return "facility " + this->facilityName + " " + facilitycatrep() +
+            " " +std::to_string(this->price) +
+            " " +std::to_string(this->lifeQualityScore) +
+            " " +std::to_string(this->economyScore) +
+            " " +std::to_string(this->environmentScore) +
+            " " +getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -240,7 +240,7 @@ PrintPlanStatus *PrintPlanStatus::clone() const
 
 const string PrintPlanStatus::toString() const
 {
-    return "PrintPlanStatus" + std::to_string(this->planId) + getActionStatus();
+    return "PrintPlanStatus " + std::to_string(this->planId) +  " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -287,7 +287,7 @@ ChangePlanPolicy *ChangePlanPolicy::clone() const
 
 const string ChangePlanPolicy::toString() const
 {
-    return "changePolicy" + std::to_string(this->planId) + this->newPolicy + getActionStatus();
+    return "changePolicy " + std::to_string(this->planId) +  " " + this->newPolicy +  " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -296,7 +296,7 @@ PrintActionsLog::PrintActionsLog() {}
 
 void PrintActionsLog::act(Simulation &simulation)
 {
-    for (BaseAction *action : simulation.getActionsLog())
+    for (auto action: simulation.getActionsLog())
     {
         std::cout << action->toString() << std::endl;
     }
@@ -309,7 +309,7 @@ PrintActionsLog *PrintActionsLog::clone() const
 
 const string PrintActionsLog::toString() const
 {
-    return "PrintActionsLog" + getActionStatus();
+    return "PrintActionsLog " + getActionStatus();
 }
 
 // ################################################################################################################################################

@@ -113,20 +113,18 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 void Plan::step()
 {
     while ((int)underConstruction.size() < this->settlement.calculateConstructionLimit())
-    {
+    {        
         // if (typeid(SelectionPolicy) == typeid(BalancedSelection)){
-            // int tempLife = life_quality_score;
-            // int tempEco = economy_score;
-            // int tempEnv = environment_score;
+        //     BalancedSelection *selectionPolicyclone = selectionPolicy->clone();
         //     for (int i = 0; i < (int)underConstruction.size(); i++)
         //     {
-        //         tempLife += underConstruction[i]->getLifeQualityScore();
-        //         tempEco += underConstruction[i]->getEconomyScore();
-        //         tempEnv += underConstruction[i]->getEnvironmentScore();
+        //         selectionPolicyclone.getLifeQualityScore();
+        //         selectionPolicyclone += underConstruction[i]->getEconomyScore();
+        //         selectionPolicyclone += underConstruction[i]->getEnvironmentScore();
         //     }
         // }
-        FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
-        
+        // FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
+        FacilityType selectedFacility = selectionPolicy->selectMe(*this);
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
 
     }
@@ -167,6 +165,16 @@ void Plan::printStatus()
 const vector<Facility *> &Plan::getFacilities() const
 {
     return facilities;
+}
+
+const vector<FacilityType> &Plan::getFacilitiesOpt() const
+{
+    return facilityOptions;
+}
+
+const vector<Facility *> &Plan::getUnderConstruction() const
+{
+    return underConstruction;
 }
 
 void Plan::addFacility(Facility *facility)

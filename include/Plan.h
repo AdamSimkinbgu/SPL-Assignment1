@@ -25,15 +25,17 @@ public:
     int getEconomyScore() const;
     int getEnvironmentScore() const;
     int getPlanID() const;
+
     SelectionPolicy *getSelectionPolicy() const;
     void setSelectionPolicy(SelectionPolicy *selectionPolicy);
     void step();
     PlanStatus getPlanStatus() const;
     void printStatus();
     const vector<Facility *> &getFacilities() const;
+    const vector<FacilityType> &getFacilitiesOpt() const;
+    const vector<Facility *> &getUnderConstruction() const;
     void addFacility(Facility *facility);
     const string toString() const;
-    vector<FacilityType> copyFacilityOptions(const vector<FacilityType> &facilityOptions);
     const Settlement &getSettlement() const;
     string printAllFacilities() const;
     void printbeforeclosed() const;

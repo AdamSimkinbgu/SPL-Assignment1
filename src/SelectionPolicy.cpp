@@ -1,4 +1,5 @@
 #include "SelectionPolicy.h"
+#include "Plan.h"
 #include <iostream>
 
 SelectionPolicy::~SelectionPolicy() {}
@@ -27,6 +28,11 @@ const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &f
     return facilitiesOptions[this->lastSelectedIndex];
 }
 
+FacilityType NaiveSelection::selectMe(const Plan &plan)
+{
+    return selectFacility(plan.getFacilitiesOpt());
+}
+
 const string NaiveSelection::toString() const
 {
     return "nve";
@@ -48,6 +54,19 @@ BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int
                                                                                                      EconomyScore(EconomyScore),
                                                                                                      EnvironmentScore(EnvironmentScore)
 {}
+
+FacilityType BalancedSelection::selectMe(const Plan &plan)
+{
+    this->LifeQualityScore = plan.getlifeQualityScore();
+    this->EconomyScore = plan.getEconomyScore();
+    this->EnvironmentScore = plan.getEnvironmentScore();
+    for (Facility *facility : plan.getUnderConstruction()){
+        this->LifeQualityScore += facility->getLifeQualityScore();
+        this->EconomyScore += facility->getEconomyScore();
+        this->EnvironmentScore += facility->getEnvironmentScore();
+    }
+    return selectFacility(plan.getFacilitiesOpt());
+}
 
 int BalancedSelection::findMaxDiff(int a, int b, int c)
 {
@@ -72,10 +91,10 @@ void BalancedSelection::setEnvironmentScore(int EnvironmentScore)
 const FacilityType &BalancedSelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
 {
     const FacilityType *bestFacility = &facilitiesOptions[0];
-    int templife = LifeQualityScore + facilitiesOptions[0].getLifeQualityScore();
-    int tempecon = EconomyScore + facilitiesOptions[0].getEconomyScore();
-    int tempenv = EnvironmentScore + facilitiesOptions[0].getEnvironmentScore();
-    int currMinDiff = findMaxDiff(templife, tempecon, tempenv);
+    int life = LifeQualityScore + facilitiesOptions[0].getLifeQualityScore();
+    int economy = EconomyScore + facilitiesOptions[0].getEconomyScore();
+    int environment = EnvironmentScore + facilitiesOptions[0].getEnvironmentScore();
+    int currMinDiff = findMaxDiff(life, economy, environment);
     for (int i = 1; i < (int)facilitiesOptions.size(); i++)
     {
         int templife = LifeQualityScore + facilitiesOptions[i].getLifeQualityScore();
@@ -109,7 +128,11 @@ BalancedSelection *BalancedSelection::clone() const
 // ########################## VVV Economy Selection VVV #################################
 
 EconomySelection::EconomySelection() : lastSelectedIndex(-1)
+{}
+
+FacilityType EconomySelection::selectMe(const Plan &plan)
 {
+    return selectFacility(plan.getFacilitiesOpt());
 }
 
 const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
@@ -148,6 +171,11 @@ EconomySelection *EconomySelection::clone() const
 
 SustainabilitySelection::SustainabilitySelection() : lastSelectedIndex(-1)
 {
+}
+
+FacilityType SustainabilitySelection::selectMe(const Plan &plan)
+{
+    return selectFacility(plan.getFacilitiesOpt());
 }
 
 const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)

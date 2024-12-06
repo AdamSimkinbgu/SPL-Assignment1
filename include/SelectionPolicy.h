@@ -3,12 +3,15 @@
 #include "Facility.h"
 using std::vector;
 
+class Plan;
+
 class SelectionPolicy {
     public:
         virtual const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) = 0;
         virtual const string toString() const = 0;
         virtual const string fullToString() const = 0;
         virtual SelectionPolicy* clone() const = 0;
+        virtual FacilityType selectMe(const Plan& plan) = 0;
         virtual ~SelectionPolicy();
         virtual bool operator==(const SelectionPolicy &other) const;
 
@@ -18,6 +21,7 @@ class NaiveSelection: public SelectionPolicy {
     public:
         NaiveSelection();
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
+        FacilityType selectMe(const Plan& plan) override;
         const string toString() const override;
         virtual const string fullToString() const override;
         NaiveSelection *clone() const override;
@@ -29,6 +33,7 @@ class NaiveSelection: public SelectionPolicy {
 class BalancedSelection: public SelectionPolicy {
     public:
         BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore);
+        FacilityType selectMe(const Plan& plan) override;
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         virtual const string fullToString() const override;
@@ -48,6 +53,7 @@ class BalancedSelection: public SelectionPolicy {
 class EconomySelection: public SelectionPolicy {
     public:
         EconomySelection();
+        FacilityType selectMe(const Plan& plan) override;
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         virtual const string fullToString() const override;
@@ -61,6 +67,7 @@ class EconomySelection: public SelectionPolicy {
 class SustainabilitySelection: public SelectionPolicy {
     public:
         SustainabilitySelection();
+        FacilityType selectMe(const Plan& plan) override;
         const FacilityType& selectFacility(const vector<FacilityType>& facilitiesOptions) override;
         const string toString() const override;
         virtual const string fullToString() const override;

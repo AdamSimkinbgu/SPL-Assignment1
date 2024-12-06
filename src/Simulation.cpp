@@ -70,16 +70,6 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     {
         facilitiesOptions.push_back(*facility.clone());
     }
-
-    // for (auto settlement : other.settlements)
-    // {
-    //     settlements.push_back(new Settlement(*settlement));
-    // }
-
-    // for (auto action : other.actionsLog)
-    // {
-    //     actionsLog.push_back(action->clone());
-    // }
 }
 
 Simulation &Simulation::operator=(const Simulation &other)
@@ -284,7 +274,7 @@ void Simulation::start()
             ChangePlanPolicy changePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
             changePlanPolicy.act(*this);
         }
-        else if (commandArgs[0] == "printActionsLog")
+        else if (commandArgs[0] == "log")
         {
             PrintActionsLog printActionsLog;
             printActionsLog.act(*this);
@@ -464,11 +454,6 @@ void Simulation::step()
 void Simulation::close()
 {
     plans.clear();
-    // for (auto it = plans.begin(); it != plans.end(); it++)
-    // {
-    //     // it->printbeforeclosed();
-    //     // it = plans.erase(it);
-    // }
     isRunning = false;
 }
 
