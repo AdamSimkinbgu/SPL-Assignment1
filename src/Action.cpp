@@ -222,7 +222,7 @@ void PrintPlanStatus::act(Simulation &simulation)
 {
     if (simulation.isPlanExists(planId))
     {
-        Plan p = simulation.getPlan(planId);
+        Plan &p = simulation.getPlan(planId);
         std::cout << p.toString(); // drops a line at the end
         complete();
     }

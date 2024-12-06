@@ -112,19 +112,9 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 
 void Plan::step()
 {
-    while ((int)underConstruction.size() < this->settlement.calculateConstructionLimit())
+    while ((int)underConstruction.size() < this->settlement.calculateConstructionLimit() && status == PlanStatus::AVALIABLE)
     {
-        // if (typeid(SelectionPolicy) == typeid(BalancedSelection)){
-        //     BalancedSelection *selectionPolicyclone = selectionPolicy->clone();
-        //     for (int i = 0; i < (int)underConstruction.size(); i++)
-        //     {
-        //         selectionPolicyclone.getLifeQualityScore();
-        //         selectionPolicyclone += underConstruction[i]->getEconomyScore();
-        //         selectionPolicyclone += underConstruction[i]->getEnvironmentScore();
-        //     }
-        // }
-        // FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
-        FacilityType selectedFacility = selectionPolicy->selectMe(*this);
+        FacilityType selectedFacility = selectionPolicy->selectMe(*this); // you are a genius itay :)
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
     }
     for (int i = 0; i < (int)underConstruction.size(); i++)

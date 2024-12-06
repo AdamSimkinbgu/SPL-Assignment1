@@ -102,7 +102,7 @@ void Facility::step()
     reduceTimeLeft();
     if (getTimeLeft() == 0)
     {
-        status = FacilityStatus::OPERATIONAL;
+        this->status = FacilityStatus::OPERATIONAL;
     }
 }
 
@@ -118,7 +118,7 @@ const FacilityStatus &Facility::getStatus() const
 
 const string Facility::getStringStatus() const
 {
-    if (this->getStatus() == FacilityStatus::OPERATIONAL)
+    if (this->getStatus() == FacilityStatus::OPERATIONAL) // this doesn't trigger right, operational is never returned
     {
         return "OPERATIONAL";
     }
