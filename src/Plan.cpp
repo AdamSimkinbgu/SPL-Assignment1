@@ -113,7 +113,7 @@ void Plan::setSelectionPolicy(SelectionPolicy *selectionPolicy)
 void Plan::step()
 {
     while ((int)underConstruction.size() < this->settlement.calculateConstructionLimit())
-    {        
+    {
         // if (typeid(SelectionPolicy) == typeid(BalancedSelection)){
         //     BalancedSelection *selectionPolicyclone = selectionPolicy->clone();
         //     for (int i = 0; i < (int)underConstruction.size(); i++)
@@ -126,7 +126,6 @@ void Plan::step()
         // FacilityType selectedFacility = selectionPolicy->selectFacility(facilityOptions);
         FacilityType selectedFacility = selectionPolicy->selectMe(*this);
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
-
     }
     for (int i = 0; i < (int)underConstruction.size(); i++)
     {
@@ -198,7 +197,7 @@ string Plan::printAllFacilities() const
     {
         facilitiesStr += "\n" + facility->toString();
     }
-    return facilitiesStr;
+    return facilitiesStr + "\n";
 }
 
 const string Plan::toString() const

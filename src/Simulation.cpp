@@ -234,9 +234,12 @@ void Simulation::start()
     open();
     while (isRunning)
     {
+        // ***COMMENT DEBUGGING HELPERS LATER***
         std::string command;
+        std::cout << "----------- end of command -----------" << std::endl; // debugging helper
         std::getline(std::cin, command);
         vector<string> commandArgs = Auxiliary::parseArguments(command);
+        std::cout << "---> " << command << std::endl; // debugging helper
         if (commandArgs[0] == "step")
         {
             SimulateStep step(std::stoi(commandArgs[1]));
@@ -294,6 +297,10 @@ void Simulation::start()
             RestoreSimulation restore;
             restore.act(*this);
         }
+        else
+        {
+            std::cout << "Unknown command" << std::endl;
+        }
     }
 }
 
@@ -321,7 +328,7 @@ void Simulation::addAction(BaseAction *action)
         return;
     }
     actionsLog.push_back(action);
-    std::cout << "Action added to log, status: " << (action->getStatus() == ActionStatus::COMPLETED ? "COMPLETED." : "ERROR.") << std::endl;
+    // std::cout << "Action added to log, status: " << (action->getStatus() == ActionStatus::COMPLETED ? "COMPLETED." : "ERROR.") << std::endl;
     // last line not needed i think
 }
 
