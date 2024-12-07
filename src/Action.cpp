@@ -101,7 +101,7 @@ void AddPlan::act(Simulation &simulation)
             if (SelectionPolicy *currSP = getSelectionPolicy(selectionPolicy))
             {
                 simulation.addPlan(*settlement, currSP);
-                delete currSP;
+                // delete currSP;
                 // std::cout << "Plan added successfully" << std::endl; // to delete later
                 complete();
                 simulation.addAction(this);

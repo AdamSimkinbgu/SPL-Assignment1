@@ -60,11 +60,26 @@ Simulation::~Simulation()
 
 Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
                                                   planCounter(other.planCounter),
-                                                  plans(other.plans),
-                                                  actionsLog(other.actionsLog),
-                                                  settlements(other.settlements),
+                                                  plans(),
+                                                  actionsLog(),
+                                                  settlements(),
                                                   facilitiesOptions()
 {
+    plans.clear();
+    for (const Plan plan : other.plans)
+    {
+        plans.push_back(plan); // copy constructor invoked
+    }
+    actionsLog.clear();
+    for (BaseAction *action : other.actionsLog)
+    {
+        actionsLog.push_back(action->clone());
+    }
+    settlements.clear();
+    for (Settlement *settlement : other.settlements)
+    {
+        settlements.push_back(new Settlement(*settlement));
+    }
     facilitiesOptions.clear();
     for (const auto &facility : other.facilitiesOptions)
     {
@@ -148,6 +163,11 @@ Simulation &Simulation::operator=(Simulation &&other) noexcept
 
 void Simulation::clear()
 {
+    // for (Plan &plan : plans)
+    // {
+    //     delete plan.getSelectionPolicy();
+    // }
+    plans.clear();
     for (auto settlement : settlements)
     {
         delete settlement;

@@ -53,14 +53,16 @@ NaiveSelection *NaiveSelection::clone() const
 BalancedSelection::BalancedSelection(int LifeQualityScore, int EconomyScore, int EnvironmentScore) : LifeQualityScore(LifeQualityScore),
                                                                                                      EconomyScore(EconomyScore),
                                                                                                      EnvironmentScore(EnvironmentScore)
-{}
+{
+}
 
 FacilityType BalancedSelection::selectMe(const Plan &plan)
 {
     this->LifeQualityScore = plan.getlifeQualityScore();
     this->EconomyScore = plan.getEconomyScore();
     this->EnvironmentScore = plan.getEnvironmentScore();
-    for (Facility *facility : plan.getUnderConstruction()){
+    for (Facility *facility : plan.getUnderConstruction())
+    {
         this->LifeQualityScore += facility->getLifeQualityScore();
         this->EconomyScore += facility->getEconomyScore();
         this->EnvironmentScore += facility->getEnvironmentScore();
@@ -128,7 +130,8 @@ BalancedSelection *BalancedSelection::clone() const
 // ########################## VVV Economy Selection VVV #################################
 
 EconomySelection::EconomySelection() : lastSelectedIndex(-1)
-{}
+{
+}
 
 FacilityType EconomySelection::selectMe(const Plan &plan)
 {
