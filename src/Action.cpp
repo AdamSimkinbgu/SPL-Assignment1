@@ -79,7 +79,7 @@ void SimulateStep::act(Simulation &simulation)
 
 const string SimulateStep::toString() const
 {
-    return "SimulateStep " + std::to_string(this->numOfSteps) + " " + getActionStatus() + "\n";
+    return "simulateStep " + std::to_string(this->numOfSteps) + " " + getActionStatus() + "\n";
 }
 
 SimulateStep *SimulateStep::clone() const
@@ -240,7 +240,7 @@ PrintPlanStatus *PrintPlanStatus::clone() const
 
 const string PrintPlanStatus::toString() const
 {
-    return "PrintPlanStatus " + std::to_string(this->planId) + " " + getActionStatus();
+    return "printPlanStatus " + std::to_string(this->planId) + " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -296,7 +296,7 @@ PrintActionsLog::PrintActionsLog() {}
 
 void PrintActionsLog::act(Simulation &simulation)
 {
-    for (auto action : simulation.getActionsLog())
+    for (BaseAction *action : simulation.getActionsLog())
     {
         std::cout << action->toString() << std::endl;
     }
