@@ -17,20 +17,14 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false),
     {
         throw std::runtime_error("Unable to open configuration file: " + config_file_path);
     }
-
     std::string line;
     while (std::getline(configFile, line))
     {
-        // Ignore comments and empty lines
         if (line.empty() || line[0] == '#')
         {
             continue;
         }
-
-        // Parse the line into arguments
         std::vector<std::string> arguments = Auxiliary::parseArguments(line);
-
-        // Process each type of command
         if (arguments[0] == "settlement")
         {
             addSettlementFromConfig(arguments);
@@ -48,7 +42,6 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false),
             std::cerr << "Unknown command in config file: " << arguments[0] << std::endl;
         }
     }
-
     configFile.close();
     std::cout << "Simulation object created" << std::endl;
 }
@@ -68,10 +61,8 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     settlements.clear();
     for (Settlement *settlement : other.settlements)
     {
-        // settlements.push_back(new Settlement(*settlement));
         Settlement *newSettlement = new Settlement(*settlement);
         settlements.push_back(newSettlement);
-        // delete newSettlement;
     }
     facilitiesOptions.clear();
     for (const auto &facility : other.facilitiesOptions)
@@ -103,18 +94,14 @@ Simulation &Simulation::operator=(const Simulation &other)
 
         isRunning = other.isRunning;
         planCounter = other.planCounter;
-        // plans = other.plans;
         for (auto settlement : other.settlements)
         {
-            // settlements.push_back(new Settlement(*settlement));
             Settlement *newSettlement = new Settlement(*settlement);
             settlements.push_back(newSettlement);
-            // delete newSettlement;
         }
 
         for (const auto &facility : other.facilitiesOptions)
         {
-            // facilitiesOptions.push_back(*facility.clone());
             FacilityType *newFacility = facility.clone();
             facilitiesOptions.push_back(*newFacility);
             delete newFacility;
@@ -165,14 +152,12 @@ Simulation &Simulation::operator=(Simulation &&other) noexcept
         isRunning = other.isRunning;
         planCounter = other.planCounter;
         actionsLog = std::move(other.actionsLog);
-        // plans = std::move(other.plans);
         for (const Plan &plan : other.plans)
         {
             Plan newPlan = plan;
             plans.push_back(newPlan);
         }
         settlements = std::move(other.settlements);
-        // facilitiesOptions = std::move(other.facilitiesOptions);
         for (const auto &facility : other.facilitiesOptions)
         {
             facilitiesOptions.push_back(*facility.clone());
@@ -235,7 +220,6 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
 void Simulation::addPlanFromConfig(std::vector<std::string> args)
 {
     int planID = getNextPlanID();
-    // Settlement currSettle = getSettlement(args[1]);
     Settlement &currSettle = getSettlement(args[1]);
 
     SelectionPolicy *currSP;
@@ -261,12 +245,9 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
     }
     Plan newPlan(planID, currSettle, currSP, facilitiesOptions);
     plans.push_back(newPlan);
-    // delete currSP;
     std::cout << "Plan number " << planID << " added." << std::endl;
-    // facil blayt
 }
 
-// this function will start the simulation process
 void Simulation::start()
 {
     open();
@@ -351,11 +332,9 @@ void Simulation::start()
     }
 }
 
-// here we will be adding a new facility into the vector - conditions applied
 void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectionPolicy)
 {
-    // settlement name needs to be checked before the call to this function
-    if (!selectionPolicy) // is this realy nessesary? we do it in AddPlan::act
+    if (!selectionPolicy)
     {
         std::cout << "Error: Selection policy is null" << std::endl;
         return;
@@ -363,26 +342,22 @@ void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectio
     int nextID = planCounter++;
     Plan newPlan(nextID, settlement, selectionPolicy, facilitiesOptions);
     plans.push_back(newPlan);
-    std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl; // maybe not needed
+    std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl; // to delete later
 }
 
-// wtf is this? I think this is how it's supposed to be
 void Simulation::addAction(BaseAction *action)
 {
-    if (!action) // not needed also i think
+    if (!action)
     {
         std::cout << "Error: Action points to null." << std::endl;
         return;
     }
     actionsLog.push_back(action);
-    // std::cout << "Action added to log, status: " << (action->getStatus() == ActionStatus::COMPLETED ? "COMPLETED." : "ERROR.") << std::endl;
-    // last line not needed i think
 }
 
-// this will add a settlement into the appropriate vector - conditions applied
 bool Simulation::addSettlement(Settlement *settlement)
 {
-    if (!settlement) // is this really nessesary? we do it in AddSettlement::act
+    if (!settlement)
     {
         std::cout << "Error: Settlement points to null." << std::endl;
         return false;
@@ -396,28 +371,25 @@ bool Simulation::addSettlement(Settlement *settlement)
         }
     }
     settlements.push_back(settlement);
-    std::cout << "Settlement added to settlements vector." << std::endl;
+    std::cout << "Settlement added to settlements vector." << std::endl; // to delete later
     return true;
 }
 
-// this is going to add a facility into the facilties vector
 bool Simulation::addFacility(FacilityType facility)
 {
     for (const FacilityType &existingFacility : facilitiesOptions)
     {
         if (existingFacility.getName() == facility.getName())
         {
-            std::cout << "Facility already exists" << std::endl; // to delete later
-            return false;                                        // Facility cannot be added
+            std::cout << "Facility already exists" << std::endl;
+            return false;
         }
     }
-
     facilitiesOptions.push_back(facility);
     std::cout << "Facility added to facilityOptions vector." << std::endl; // to delete later
     return true;
 }
 
-// checks if a settlement DOES exist... pff...
 bool Simulation::isSettlementExists(const string &settlementName)
 {
     for (Settlement *settlement : settlements)
@@ -442,7 +414,6 @@ bool Simulation::isPlanExists(const int planID)
     return false;
 }
 
-// given a name of a settlement, returns the address to it
 Settlement &Simulation::getSettlement(const string &settlementName)
 {
     for (auto &currSettlement : settlements)
@@ -455,7 +426,6 @@ Settlement &Simulation::getSettlement(const string &settlementName)
     throw std::runtime_error("Settlement not found");
 }
 
-// given the plan id, returns the address to it
 Plan &Simulation::getPlan(const int planID)
 {
     for (auto &currPlan : plans)
@@ -473,13 +443,11 @@ PlanStatus Plan::getPlanStatus() const
     return status;
 }
 
-// returns the address to the plans vector
 const vector<Plan> &Simulation::getPlans() const
 {
     return plans;
 }
 
-// returns the address to the settlement pointers vector
 const vector<Settlement *> &Simulation::getSettlements() const
 {
     return settlements;
@@ -495,7 +463,6 @@ int Simulation::getNextPlanID()
     return planCounter++;
 }
 
-// executes a single step in the simulation
 void Simulation::step()
 {
     for (Plan &plan : plans)
@@ -504,7 +471,6 @@ void Simulation::step()
     }
 }
 
-// closes the simulation after applying changes and a save, printing the actions done at last
 void Simulation::close()
 {
     clear();
