@@ -107,6 +107,8 @@ debug: clean $(TARGET)
 valgrind: debug
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET) $(ARGS)
 
+valgrindAdv: debug
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./$(TARGET) $(ARGS)
 # Clean Target
 clean:
 	rm -rf $(BIN_DIR)/*.o $(TARGET)

@@ -83,7 +83,9 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     facilitiesOptions.clear();
     for (const auto &facility : other.facilitiesOptions)
     {
-        facilitiesOptions.push_back(*facility.clone());
+        FacilityType *newFacility = facility.clone();
+        facilitiesOptions.push_back(*newFacility);
+        delete newFacility;
     }
 }
 
@@ -103,7 +105,10 @@ Simulation &Simulation::operator=(const Simulation &other)
 
         for (const auto &facility : other.facilitiesOptions)
         {
-            facilitiesOptions.push_back(*facility.clone());
+            // facilitiesOptions.push_back(*facility.clone());
+            FacilityType *newFacility = facility.clone();
+            facilitiesOptions.push_back(*newFacility);
+            delete newFacility;
         }
 
         for (auto settlement : other.settlements)
