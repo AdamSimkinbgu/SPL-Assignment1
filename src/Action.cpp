@@ -318,12 +318,12 @@ Close::Close() {}
 
 void Close::act(Simulation &simulation)
 {
-    std::string output = "";
-    for (Plan plan : simulation.getPlans())
-    {
-        output += plan.toString();
-    }
-    std::cout << output << std::endl;
+    // std::string output = "";
+    // for (Plan plan : simulation.getPlans())
+    // {
+    //     output += plan.toString();
+    // }
+    // std::cout << output << std::endl;
     simulation.addAction(this);
     simulation.close();
 }

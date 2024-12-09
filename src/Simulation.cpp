@@ -91,7 +91,7 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     {
         FacilityType *newFacility = facility.clone();
         facilitiesOptions.push_back(*newFacility);
-        // delete newFacility;
+        delete newFacility;
     }
 }
 
@@ -117,7 +117,7 @@ Simulation &Simulation::operator=(const Simulation &other)
             // facilitiesOptions.push_back(*facility.clone());
             FacilityType *newFacility = facility.clone();
             facilitiesOptions.push_back(*newFacility);
-            // delete newFacility;
+            delete newFacility;
         }
 
         for (auto settlement : other.settlements)
@@ -185,10 +185,6 @@ Simulation &Simulation::operator=(Simulation &&other) noexcept
 
 void Simulation::clear()
 {
-    // for (Plan &plan : plans)
-    // {
-    //     delete plan.getSelectionPolicy();
-    // }
     plans.clear();
     for (auto settlement : settlements)
     {
@@ -297,6 +293,7 @@ void Simulation::start()
         {
             // Close close;
             // close.act(*this);
+            close();
             Close *close = new Close();
             close->act(*this);
         }
