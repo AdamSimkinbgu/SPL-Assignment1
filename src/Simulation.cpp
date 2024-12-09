@@ -65,19 +65,6 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
                                                   settlements(),
                                                   facilitiesOptions()
 {
-    plans.clear();
-    for (const Plan plan : other.plans)
-    {
-        const Settlement &settlement = plan.getSettlement();
-        SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
-        Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
-        plans.push_back(newPlan);
-    }
-    actionsLog.clear();
-    for (BaseAction *action : other.actionsLog)
-    {
-        actionsLog.push_back(action->clone());
-    }
     settlements.clear();
     for (Settlement *settlement : other.settlements)
     {
@@ -93,6 +80,19 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
         facilitiesOptions.push_back(*newFacility);
         delete newFacility;
     }
+    plans.clear();
+    for (const Plan plan : other.plans)
+    {
+        Settlement &settlement = getSettlement(plan.getSettlement().getName());
+        SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
+        Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
+        plans.push_back(newPlan);
+    }
+    actionsLog.clear();
+    for (BaseAction *action : other.actionsLog)
+    {
+        actionsLog.push_back(action->clone());
+    }
 }
 
 Simulation &Simulation::operator=(const Simulation &other)
@@ -104,12 +104,12 @@ Simulation &Simulation::operator=(const Simulation &other)
         isRunning = other.isRunning;
         planCounter = other.planCounter;
         // plans = other.plans;
-        for (const Plan &plan : other.plans)
+        for (auto settlement : other.settlements)
         {
-            const Settlement &settlement = plan.getSettlement();
-            SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
-            Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
-            plans.push_back(newPlan);
+            // settlements.push_back(new Settlement(*settlement));
+            Settlement *newSettlement = new Settlement(*settlement);
+            settlements.push_back(newSettlement);
+            // delete newSettlement;
         }
 
         for (const auto &facility : other.facilitiesOptions)
@@ -120,12 +120,12 @@ Simulation &Simulation::operator=(const Simulation &other)
             delete newFacility;
         }
 
-        for (auto settlement : other.settlements)
+        for (const Plan &plan : other.plans)
         {
-            // settlements.push_back(new Settlement(*settlement));
-            Settlement *newSettlement = new Settlement(*settlement);
-            settlements.push_back(newSettlement);
-            // delete newSettlement;
+            const Settlement &settlement = plan.getSettlement();
+            SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
+            Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
+            plans.push_back(newPlan);
         }
 
         for (auto action : other.actionsLog)
@@ -284,30 +284,22 @@ void Simulation::start()
         }
         else if (commandArgs[0] == "log")
         {
-            // PrintActionsLog printActionsLog;
-            // printActionsLog.act(*this);
             PrintActionsLog *printActionsLog = new PrintActionsLog();
             printActionsLog->act(*this);
         }
         else if (commandArgs[0] == "close")
         {
-            // Close close;
-            // close.act(*this);
             close();
             Close *close = new Close();
             close->act(*this);
         }
         else if (commandArgs[0] == "backup")
         {
-            // BackupSimulation backup;
-            // backup.act(*this);
             BackupSimulation *backup = new BackupSimulation();
             backup->act(*this);
         }
         else if (commandArgs[0] == "restore")
         {
-            // RestoreSimulation restore;
-            // restore.act(*this);
             RestoreSimulation *restore = new RestoreSimulation();
             restore->act(*this);
         }
@@ -317,23 +309,16 @@ void Simulation::start()
         }
         else if (commandArgs[0] == "step")
         {
-            // SimulateStep step(std::stoi(commandArgs[1]));
-            // step.act(*this);
             SimulateStep *step = new SimulateStep(std::stoi(commandArgs[1]));
             step->act(*this);
         }
         else if (commandArgs[0] == "plan")
         {
-            // AddPlan addPlan(commandArgs[1], commandArgs[2]);
-            // addPlan.act(*this);
             AddPlan *addPlan = new AddPlan(commandArgs[1], commandArgs[2]);
             addPlan->act(*this);
         }
         else if (commandArgs[0] == "settlement")
         {
-            // AddSettlement addSettlement(commandArgs[1], commandArgs[2] == "0" ? SettlementType::VILLAGE : commandArgs[2] == "1" ? SettlementType::CITY
-            //                                                                                                                     : SettlementType::METROPOLIS);
-            // addSettlement.act(*this);
             AddSettlement *addSettlement = new AddSettlement(commandArgs[1], commandArgs[2] == "0" ? SettlementType::VILLAGE : commandArgs[2] == "1" ? SettlementType::CITY
                                                                                                                                                      : SettlementType::METROPOLIS);
             addSettlement->act(*this);
@@ -346,22 +331,16 @@ void Simulation::start()
             int lifeQualityScore = std::stoi(commandArgs[4]);
             int economyScore = std::stoi(commandArgs[5]);
             int environmentScore = std::stoi(commandArgs[6]);
-            // AddFacility addFacility(commandArgs[1], category, price, lifeQualityScore, economyScore, environmentScore);
-            // addFacility.act(*this);
             AddFacility *addFacility = new AddFacility(commandArgs[1], category, price, lifeQualityScore, economyScore, environmentScore);
             addFacility->act(*this);
         }
         else if (commandArgs[0] == "planStatus")
         {
-            // PrintPlanStatus printPlanStatus(std::stoi(commandArgs[1]));
-            // printPlanStatus.act(*this);
             PrintPlanStatus *printPlanStatus = new PrintPlanStatus(std::stoi(commandArgs[1]));
             printPlanStatus->act(*this);
         }
         else if (commandArgs[0] == "changePolicy")
         {
-            // ChangePlanPolicy changePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
-            // changePlanPolicy.act(*this);
             ChangePlanPolicy *changePlanPolicy = new ChangePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
             changePlanPolicy->act(*this);
         }

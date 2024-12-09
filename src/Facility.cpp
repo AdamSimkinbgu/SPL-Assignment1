@@ -10,13 +10,6 @@ FacilityType::FacilityType(const string &name, const FacilityCategory category,
                                                                                                                                  economy_score(economy_score),
                                                                                                                                  environment_score(environment_score) {}
 
-// FacilityType::FacilityType(const FacilityType &f) : name(f.getName()),
-//                                                    category(f.getCategory()),
-//                                                    price(f.getCost()),
-//                                                    lifeQuality_score(f.getLifeQualityScore()),
-//                                                    economy_score(f.getEconomyScore()),
-//                                                    environment_score(f.getEnvironmentScore()) {}
-
 bool FacilityType::operator==(const FacilityType &other) const
 {
     return name == other.name &&
