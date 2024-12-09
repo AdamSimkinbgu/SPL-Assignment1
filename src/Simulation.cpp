@@ -68,7 +68,10 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     plans.clear();
     for (const Plan plan : other.plans)
     {
-        plans.push_back(plan); // copy constructor in
+        const Settlement &settlement = plan.getSettlement();
+        SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
+        Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
+        plans.push_back(newPlan);
     }
     actionsLog.clear();
     for (BaseAction *action : other.actionsLog)
@@ -78,14 +81,17 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     settlements.clear();
     for (Settlement *settlement : other.settlements)
     {
-        settlements.push_back(new Settlement(*settlement));
+        // settlements.push_back(new Settlement(*settlement));
+        Settlement *newSettlement = new Settlement(*settlement);
+        settlements.push_back(newSettlement);
+        // delete newSettlement;
     }
     facilitiesOptions.clear();
     for (const auto &facility : other.facilitiesOptions)
     {
         FacilityType *newFacility = facility.clone();
         facilitiesOptions.push_back(*newFacility);
-        delete newFacility;
+        // delete newFacility;
     }
 }
 
@@ -100,7 +106,10 @@ Simulation &Simulation::operator=(const Simulation &other)
         // plans = other.plans;
         for (const Plan &plan : other.plans)
         {
-            plans.push_back(plan); // Copy each plan
+            const Settlement &settlement = plan.getSettlement();
+            SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
+            Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
+            plans.push_back(newPlan);
         }
 
         for (const auto &facility : other.facilitiesOptions)
@@ -108,12 +117,15 @@ Simulation &Simulation::operator=(const Simulation &other)
             // facilitiesOptions.push_back(*facility.clone());
             FacilityType *newFacility = facility.clone();
             facilitiesOptions.push_back(*newFacility);
-            delete newFacility;
+            // delete newFacility;
         }
 
         for (auto settlement : other.settlements)
         {
-            settlements.push_back(new Settlement(*settlement));
+            // settlements.push_back(new Settlement(*settlement));
+            Settlement *newSettlement = new Settlement(*settlement);
+            settlements.push_back(newSettlement);
+            // delete newSettlement;
         }
 
         for (auto action : other.actionsLog)
@@ -153,7 +165,12 @@ Simulation &Simulation::operator=(Simulation &&other) noexcept
         isRunning = other.isRunning;
         planCounter = other.planCounter;
         actionsLog = std::move(other.actionsLog);
-        plans = std::move(other.plans);
+        // plans = std::move(other.plans);
+        for (const Plan &plan : other.plans)
+        {
+            Plan newPlan = plan;
+            plans.push_back(newPlan);
+        }
         settlements = std::move(other.settlements);
         // facilitiesOptions = std::move(other.facilitiesOptions);
         for (const auto &facility : other.facilitiesOptions)
@@ -514,7 +531,7 @@ void Simulation::step()
 // closes the simulation after applying changes and a save, printing the actions done at last
 void Simulation::close()
 {
-    plans.clear();
+    clear();
     isRunning = false;
 }
 
