@@ -103,6 +103,10 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
 debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: clean $(TARGET)
 
+# Valgrind Memory Check
+valgrind: debug
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET) $(ARGS)
+
 # Clean Target
 clean:
 	rm -rf $(BIN_DIR)/*.o $(TARGET)
@@ -112,4 +116,4 @@ run: $(TARGET)
 	./$(TARGET) $(ARGS)
 
 # Phony Targets
-.PHONY: all clean debug run
+.PHONY: all clean debug run valgrind

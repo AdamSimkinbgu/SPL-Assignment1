@@ -68,7 +68,7 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
     plans.clear();
     for (const Plan plan : other.plans)
     {
-        plans.push_back(plan); // copy constructor invoked
+        plans.push_back(plan); // copy constructor in
     }
     actionsLog.clear();
     for (BaseAction *action : other.actionsLog)

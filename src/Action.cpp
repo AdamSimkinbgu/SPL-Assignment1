@@ -138,9 +138,9 @@ void AddSettlement::act(Simulation &simulation)
     else
     {
         error("Settlement already exists");
+        delete newSettle;
     }
     simulation.addAction(this);
-    // delete newSettle?;
 }
 
 AddSettlement *AddSettlement::clone() const
@@ -196,7 +196,7 @@ void AddFacility::act(Simulation &simulation)
         error("Facility already exists");
     }
     simulation.addAction(this);
-    // delete facil?;
+    delete facil;
 }
 
 AddFacility *AddFacility::clone() const
@@ -318,6 +318,13 @@ Close::Close() {}
 
 void Close::act(Simulation &simulation)
 {
+    std::string output = "";
+    for (Plan plan : simulation.getPlans())
+    {
+        output += plan.toString();
+    }
+    std::cout << output << std::endl;
+    simulation.addAction(this);
     simulation.close();
 }
 
