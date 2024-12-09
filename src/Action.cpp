@@ -5,8 +5,6 @@
 #include "SelectionPolicy.h"
 #include "Facility.h"
 
-// extern Simulation *backup;
-
 BaseAction::BaseAction() : errorMsg(), status() {}
 
 ActionStatus BaseAction::getStatus() const
@@ -79,7 +77,7 @@ void SimulateStep::act(Simulation &simulation)
 
 const string SimulateStep::toString() const
 {
-    return "simulateStep " + std::to_string(this->numOfSteps) + " " + getActionStatus() + "\n";
+    return "simulateStep " + std::to_string(this->numOfSteps) + " " + getActionStatus();
 }
 
 SimulateStep *SimulateStep::clone() const
@@ -118,7 +116,7 @@ AddPlan *AddPlan::clone() const
 
 const string AddPlan::toString() const
 {
-    return "plan " + this->settlementName + " " + this->selectionPolicy + " " + getActionStatus() + "\n";
+    return "plan " + this->settlementName + " " + this->selectionPolicy + " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -150,7 +148,7 @@ const string AddSettlement::toString() const
 {
     string s = this->settlementType == SettlementType::VILLAGE ? "VILLAGE" : this->settlementType == SettlementType::CITY ? "CITY"
                                                                                                                           : "METROPOLIS";
-    return "settlement " + this->settlementName + " " + s + " " + getActionStatus() + "\n";
+    return "settlement " + this->settlementName + " " + s + " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -209,7 +207,7 @@ const string AddFacility::toString() const
            " " + std::to_string(this->lifeQualityScore) +
            " " + std::to_string(this->economyScore) +
            " " + std::to_string(this->environmentScore) +
-           " " + getActionStatus() + "\n";
+           " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -287,7 +285,7 @@ ChangePlanPolicy *ChangePlanPolicy::clone() const
 
 const string ChangePlanPolicy::toString() const
 {
-    return "changePolicy " + std::to_string(this->planId) + " " + this->newPolicy + " " + getActionStatus() + "\n";
+    return "changePolicy " + std::to_string(this->planId) + " " + this->newPolicy + " " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -311,7 +309,7 @@ PrintActionsLog *PrintActionsLog::clone() const
 
 const string PrintActionsLog::toString() const
 {
-    return "PrintActionsLog " + getActionStatus() + "\n";
+    return "PrintActionsLog " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -331,7 +329,7 @@ Close *Close::clone() const
 
 const string Close::toString() const
 {
-    return "Close " + getActionStatus() + "\n";
+    return "Close " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -354,7 +352,7 @@ BackupSimulation *BackupSimulation::clone() const
 
 const string BackupSimulation::toString() const
 {
-    return "backup " + getActionStatus() + "\n";
+    return "backup " + getActionStatus();
 }
 
 // ################################################################################################################################################
@@ -383,5 +381,5 @@ RestoreSimulation *RestoreSimulation::clone() const
 
 const string RestoreSimulation::toString() const
 {
-    return "restore " + getActionStatus() + "\n";
+    return "restore " + getActionStatus();
 }

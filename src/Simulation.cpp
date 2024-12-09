@@ -15,7 +15,7 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false),
     std::ifstream configFile(config_file_path);
     if (!configFile.is_open())
     {
-        throw std::runtime_error("Unable to open configuration file: " + config_file_path);
+        throw std::runtime_error("Error: Unable to open configuration file: " + config_file_path);
     }
     std::string line;
     while (std::getline(configFile, line))
@@ -39,11 +39,11 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false),
         }
         else
         {
-            std::cerr << "Unknown command in config file: " << arguments[0] << std::endl;
+            std::cerr << "Error: Unknown command in config file: " << arguments[0] << std::endl;
         }
     }
     configFile.close();
-    std::cout << "Simulation object created" << std::endl;
+    // std::cout << "Simulation object created" << std::endl;
 }
 
 Simulation::~Simulation()
@@ -177,7 +177,7 @@ void Simulation::addSettlementFromConfig(std::vector<std::string> args)
                                                                                           : SettlementType::METROPOLIS;
     Settlement *temp = new Settlement(args[1], settleType);
     settlements.push_back(temp);
-    std::cout << "Settlement " << args[1] << " added." << std::endl;
+    // std::cout << "Settlement " << args[1] << " added." << std::endl;
 }
 
 void Simulation::addFacilityFromConfig(std::vector<std::string> args)
@@ -201,7 +201,7 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
     int eco_impact = std::stoi(args[5]);
     int env_impact = std::stoi(args[6]);
     facilitiesOptions.push_back(FacilityType(nameFacility, catFacility, price, lifeq_impact, eco_impact, env_impact));
-    std::cout << "Facility " << nameFacility << " added." << std::endl;
+    // std::cout << "Facility " << nameFacility << " added." << std::endl;
 }
 
 void Simulation::addPlanFromConfig(std::vector<std::string> args)
@@ -232,7 +232,7 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
     }
     Plan newPlan(planID, currSettle, currSP, facilitiesOptions);
     plans.push_back(newPlan);
-    std::cout << "Plan number " << planID << " added." << std::endl;
+    // std::cout << "Plan number " << planID << " added." << std::endl;
 }
 
 void Simulation::start()
@@ -242,10 +242,10 @@ void Simulation::start()
     {
         // ***COMMENT DEBUGGING HELPERS LATER***
         std::string command;
-        std::cout << "----------- end of command -----------" << std::endl; // debugging helper
+        // std::cout << "----------- end of command -----------" << std::endl; // debugging helper
         std::getline(std::cin, command);
         vector<string> commandArgs = Auxiliary::parseArguments(command);
-        std::cout << "---> " << command << std::endl; // debugging helper
+        // std::cout << "---> " << command << std::endl; // debugging helper
         if (commandArgs.empty())
         {
             std::cout << "Empty command" << std::endl;
@@ -314,7 +314,7 @@ void Simulation::start()
         }
         else
         {
-            std::cout << "Unknown command" << std::endl;
+            std::cout << "Error: Unknown command" << std::endl;
         }
     }
 }
@@ -329,7 +329,7 @@ void Simulation::addPlan(const Settlement &settlement, SelectionPolicy *selectio
     int nextID = planCounter++;
     Plan newPlan(nextID, settlement, selectionPolicy, facilitiesOptions);
     plans.push_back(newPlan);
-    std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl; // to delete later
+    // std::cout << "Plan added successfully with ID" << nextID << "for settlement: " << settlement.getName() << std::endl; // to delete later
 }
 
 void Simulation::addAction(BaseAction *action)
@@ -353,12 +353,12 @@ bool Simulation::addSettlement(Settlement *settlement)
     {
         if (exsistsSettlement->getName() == settlement->getName())
         {
-            std::cout << "Settlement already exists" << std::endl;
+            std::cout << "Error: Settlement already exists" << std::endl;
             return false;
         }
     }
     settlements.push_back(settlement);
-    std::cout << "Settlement added to settlements vector." << std::endl; // to delete later
+    // std::cout << "Settlement added to settlements vector." << std::endl; // to delete later
     return true;
 }
 
@@ -373,7 +373,7 @@ bool Simulation::addFacility(FacilityType facility)
         }
     }
     facilitiesOptions.push_back(facility);
-    std::cout << "Facility added to facilityOptions vector." << std::endl; // to delete later
+    // std::cout << "Facility added to facilityOptions vector." << std::endl; // to delete later
     return true;
 }
 
