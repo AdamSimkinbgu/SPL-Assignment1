@@ -101,8 +101,6 @@ void AddPlan::act(Simulation &simulation)
             if (SelectionPolicy *currSP = getSelectionPolicy(selectionPolicy))
             {
                 simulation.addPlan(*settlement, currSP);
-                // delete currSP;
-                // std::cout << "Plan added successfully" << std::endl; // to delete later
                 complete();
                 simulation.addAction(this);
                 return;
@@ -265,12 +263,14 @@ void ChangePlanPolicy::act(Simulation &simulation)
                 p.setSelectionPolicy(newPol);
                 complete();
                 simulation.addAction(this);
+                return;
             }
         }
         else
         {
-            error("Cannot change selection policy");
+            error("Invalid selection policy");
             simulation.addAction(this);
+            return;
         }
     }
     else
@@ -300,6 +300,8 @@ void PrintActionsLog::act(Simulation &simulation)
     {
         std::cout << action->toString() << std::endl;
     }
+    complete();
+    simulation.addAction(this);
 }
 
 PrintActionsLog *PrintActionsLog::clone() const
@@ -318,14 +320,8 @@ Close::Close() {}
 
 void Close::act(Simulation &simulation)
 {
-    // std::string output = "";
-    // for (Plan plan : simulation.getPlans())
-    // {
-    //     output += plan.toString();
-    // }
-    // std::cout << output << std::endl;
+    complete();
     simulation.addAction(this);
-    simulation.close();
 }
 
 Close *Close::clone() const
@@ -347,6 +343,7 @@ void BackupSimulation::act(Simulation &simulation)
     extern Simulation *backup;
     delete backup;
     backup = new Simulation(simulation);
+    complete();
     simulation.addAction(this);
 }
 

@@ -72,7 +72,7 @@ Simulation::Simulation(const Simulation &other) : isRunning(other.isRunning),
         delete newFacility;
     }
     plans.clear();
-    for (const Plan plan : other.plans)
+    for (const Plan &plan : other.plans)
     {
         Settlement &settlement = getSettlement(plan.getSettlement().getName());
         SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
@@ -109,7 +109,7 @@ Simulation &Simulation::operator=(const Simulation &other)
 
         for (const Plan &plan : other.plans)
         {
-            const Settlement &settlement = plan.getSettlement();
+            Settlement &settlement = getSettlement(plan.getSettlement().getName());
             SelectionPolicy *selectionPolicy = plan.getSelectionPolicy()->clone();
             Plan newPlan(plan.getPlanID(), settlement, selectionPolicy, plan.getFacilitiesOpt());
             plans.push_back(newPlan);
@@ -123,22 +123,14 @@ Simulation &Simulation::operator=(const Simulation &other)
     return *this;
 }
 
-Simulation::Simulation(Simulation &&other) noexcept : isRunning(other.isRunning),
-                                                      planCounter(other.planCounter),
-                                                      plans(),
-                                                      actionsLog(std::move(other.actionsLog)),
-                                                      settlements(std::move(other.settlements)),
-                                                      facilitiesOptions()
+Simulation::Simulation(Simulation &&other) noexcept
+    : isRunning(other.isRunning),
+      planCounter(other.planCounter),
+      plans(std::move(other.plans)),
+      actionsLog(std::move(other.actionsLog)),
+      settlements(std::move(other.settlements)),
+      facilitiesOptions(std::move(other.facilitiesOptions))
 {
-    for (const auto &facility : other.facilitiesOptions)
-    {
-        facilitiesOptions.push_back(*facility.clone());
-    }
-    for (const Plan &plan : other.plans)
-    {
-        plans.push_back(plan);
-    }
-
     other.isRunning = false;
     other.planCounter = 0;
 }
@@ -151,17 +143,12 @@ Simulation &Simulation::operator=(Simulation &&other) noexcept
 
         isRunning = other.isRunning;
         planCounter = other.planCounter;
+
+        plans = std::move(other.plans);
         actionsLog = std::move(other.actionsLog);
-        for (const Plan &plan : other.plans)
-        {
-            Plan newPlan = plan;
-            plans.push_back(newPlan);
-        }
         settlements = std::move(other.settlements);
-        for (const auto &facility : other.facilitiesOptions)
-        {
-            facilitiesOptions.push_back(*facility.clone());
-        }
+        facilitiesOptions = std::move(other.facilitiesOptions);
+
         other.isRunning = false;
         other.planCounter = 0;
     }
