@@ -2,15 +2,12 @@
 #include <stdexcept>
 using std::string;
 
-// Main constructor
 Settlement::Settlement(const string &name, SettlementType type)
     : name(name), type(type) {}
 
-// Copy constructor
 Settlement::Settlement(const Settlement &settlement)
     : name(settlement.getName()), type(settlement.getType()) {}
 
-// Helper function to calculate the construction limit from SettlementType
 int Settlement::calculateConstructionLimit() const
 {
     switch (type)
@@ -26,25 +23,21 @@ int Settlement::calculateConstructionLimit() const
     }
 }
 
-// Getter for name
 const string &Settlement::getName() const
 {
     return name;
 }
 
-// Getter for type
 SettlementType Settlement::getType() const
 {
     return type;
 }
 
-// String representation of Settlement
 const string Settlement::toString() const
 {
     return "Settlement " + name + " is a " + typeToString();
 }
 
-// Convert SettlementType to string
 const string Settlement::typeToString() const
 {
     switch (type)

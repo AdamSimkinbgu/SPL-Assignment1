@@ -341,8 +341,8 @@ void BackupSimulation::act(Simulation &simulation)
     extern Simulation *backup;
     delete backup;
     backup = new Simulation(simulation);
-    complete();
     simulation.addAction(this);
+    complete();
 }
 
 BackupSimulation *BackupSimulation::clone() const

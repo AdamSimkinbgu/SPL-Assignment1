@@ -8,9 +8,9 @@ Plan::Plan(const int planId, const Settlement &settlement,
     : plan_id(planId),
       settlement(settlement),
       selectionPolicy(selectionPolicy),
-      status(PlanStatus::AVALIABLE), // Matches order in declaration
-      facilities(),                  // Explicitly initialize vectors
-      underConstruction(),           // Explicitly initialize vectors
+      status(PlanStatus::AVALIABLE),
+      facilities(),
+      underConstruction(),
       facilityOptions(facilityOptions),
       life_quality_score(0),
       economy_score(0),

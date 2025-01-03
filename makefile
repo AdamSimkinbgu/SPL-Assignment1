@@ -1,121 +1,41 @@
-# # Please implement your Makefile rules and targets below.
-# # Customize this file to define how to build your project.
-# ARGS = config_file.txt
+all: clean compile link run
 
-# # Please implement your Makefile rules and targets below.
-# # Customize this file to define how to build your project.
-# all: compile
+run:
+	./bin/main config_file.txt
 
-# compile: bin bin/main
+link:
+	g++ -o bin/main bin/*.o
 
-# bin:
-# 	mkdir bin
+compile: main Action Auxiliary Facility Plan SelectionPolicy Settlement Simulation
 
-# bin/main: bin/Simulation.o bin/main.o
-# 	g++ -o bin/main bin/Simulation.o bin/main.o
+main:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/main.o src/main.cpp
 
-# bin/Simulation.o: src/Simulation.cpp
-# 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Simulation.o src/Simulation.cpp
+Action:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Action.o src/Action.cpp
 
-# bin/main.o: src/main.cpp
-# 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/main.o src/main.cpp
+Auxiliary:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Auxiliary.o src/Auxiliary.cpp
 
-# clean: 
-# 	rm -f bin/*
+Facility:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Facility.o src/Facility.cpp
 
-# run: bin/main
-# 	./bin/main $(ARGS)
-####################################################################################
-# # Arguments
-# ARGS = config_file.txt
+Plan:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Plan.o src/Plan.cpp
 
-# # Compiler and Flags
-# CXX = g++
-# CXXFLAGS = -Wall -Wextra -Wpedantic -Weffc++ -std=c++11
-# INCLUDE = -Iinclude
+SelectionPolicy:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/SelectionPolicy.o src/SelectionPolicy.cpp
 
-# # Directories
-# SRC_DIR = src
-# BIN_DIR = bin
-# INCLUDE_DIR = include
+Settlement:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Settlement.o src/Settlement.cpp
 
-# # Source Files
-# SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-# OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(SOURCES))
+Simulation:
+	g++ -g -Weffc++ -Wall -std=c++11 -Iinclude -c -o bin/Simulation.o src/Simulation.cpp
 
-# # Target Executable
-# TARGET = $(BIN_DIR)/main
 
-# # Default Target
-# all: $(TARGET)
-
-# # Build Target
-# $(TARGET): $(OBJECTS)
-# 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET)
-
-# # Build Object Files
-# $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
-# 	@mkdir -p $(BIN_DIR)
-# 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-
-# # Clean Target
-# clean:
-# 	rm -rf $(BIN_DIR)
-
-# # Run Target
-# run: $(TARGET)
-# 	./$(TARGET) $(ARGS)
-
-# Arguments
-ARGS = config_file.txt
-
-# Compiler and Flags
-CXX = g++
-CXXFLAGS = -Wall -Wextra -Wpedantic -Weffc++ -std=c++11
-DEBUGFLAGS = -g
-INCLUDE = -Iinclude
-
-# Directories
-SRC_DIR = src
-BIN_DIR = bin
-INCLUDE_DIR = include
-
-# Source Files
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(SOURCES))
-
-# Target Executable
-TARGET = $(BIN_DIR)/main
-
-# Default Target
-all: $(TARGET)
-
-# Build Target
-$(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET)
-
-# Build Object Files
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-
-# Debug Target
-debug: CXXFLAGS += $(DEBUGFLAGS)
-debug: clean $(TARGET)
-
-# Valgrind Memory Check
-valgrind: debug
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET) $(ARGS)
-
-valgrindAdv: debug
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./$(TARGET) $(ARGS)
-# Clean Target
 clean:
-	rm -rf $(BIN_DIR)/*.o $(TARGET)
+	rm -f bin/*.o bin/main
 
-# Run Target
-run: $(TARGET)
-	./$(TARGET) $(ARGS)
 
-# Phony Targets
-.PHONY: all clean debug run valgrind
+valgrind:
+	valgrind --leak-check=full --show-reachable=yes bin/main config_file.txt

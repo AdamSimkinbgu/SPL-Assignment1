@@ -77,7 +77,7 @@ Facility::Facility(const FacilityType &type, const string &settlementName) : Fac
 
 bool Facility::operator==(const Facility &other) const
 {
-    return FacilityType::operator==(other) && // Compare inherited FacilityType attributes
+    return FacilityType::operator==(other) &&
            settlementName == other.settlementName &&
            status == other.status &&
            timeLeft == other.timeLeft;
@@ -118,7 +118,7 @@ const FacilityStatus &Facility::getStatus() const
 
 const string Facility::getStringStatus() const
 {
-    if (this->getStatus() == FacilityStatus::OPERATIONAL) // this doesn't trigger right, operational is never returned
+    if (this->getStatus() == FacilityStatus::OPERATIONAL)
     {
         return "OPERATIONAL";
     }

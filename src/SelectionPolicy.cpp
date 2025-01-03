@@ -23,15 +23,6 @@ const FacilityType &NaiveSelection::selectFacility(const vector<FacilityType> &f
     }
     lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
     return facilitiesOptions[lastSelectedIndex];
-    // if (this->lastSelectedIndex == (int)facilitiesOptions.size())
-    // {
-    //     this->lastSelectedIndex = 0;
-    // }
-    // else
-    // {
-    //     this->lastSelectedIndex++;
-    // }
-    // return facilitiesOptions[this->lastSelectedIndex];
 }
 
 FacilityType NaiveSelection::selectMe(const Plan &plan)
@@ -155,7 +146,6 @@ const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> 
         throw std::runtime_error("No facilities available for selection");
     }
 
-    // We'll attempt to find an ECONOMY facility by scanning the entire vector once.
     lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
     int startIndex = lastSelectedIndex;
 
@@ -168,31 +158,9 @@ const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> 
         lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
     } while (lastSelectedIndex != startIndex);
 
-    // If no ECONOMY facility found, just return the first facility as a fallback
     lastSelectedIndex = 0;
     return facilitiesOptions[0];
 }
-
-// const FacilityType &EconomySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
-// {
-//     if (facilitiesOptions.empty())
-//     {
-//         throw std::runtime_error("No facilities available for selection");
-//     }
-//     lastSelectedIndex++;
-//     while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ECONOMY)
-//     {
-//         if (this->lastSelectedIndex == (int)facilitiesOptions.size())
-//         {
-//             this->lastSelectedIndex = 0;
-//         }
-//         else
-//         {
-//             this->lastSelectedIndex++;
-//         }
-//     }
-//     return facilitiesOptions[this->lastSelectedIndex];
-// }
 
 const string EconomySelection::toString() const
 {
@@ -239,31 +207,9 @@ const FacilityType &SustainabilitySelection::selectFacility(const vector<Facilit
         lastSelectedIndex = (lastSelectedIndex + 1) % facilitiesOptions.size();
     } while (lastSelectedIndex != startIndex);
 
-    // If no ENVIRONMENT facility found, return first as a fallback
     lastSelectedIndex = 0;
     return facilitiesOptions[0];
 }
-
-// const FacilityType &SustainabilitySelection::selectFacility(const vector<FacilityType> &facilitiesOptions)
-// {
-//     if (facilitiesOptions.empty())
-//     {
-//         throw std::runtime_error("No facilities available for selection");
-//     }
-//     lastSelectedIndex++;
-//     while (facilitiesOptions[this->lastSelectedIndex].getCategory() != FacilityCategory::ENVIRONMENT)
-//     {
-//         if (this->lastSelectedIndex == (int)facilitiesOptions.size())
-//         {
-//             this->lastSelectedIndex = 0;
-//         }
-//         else
-//         {
-//             this->lastSelectedIndex++;
-//         }
-//     }
-//     return facilitiesOptions[this->lastSelectedIndex];
-// }
 
 const string SustainabilitySelection::toString() const
 {
