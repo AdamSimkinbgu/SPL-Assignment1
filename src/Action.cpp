@@ -247,7 +247,7 @@ void ChangePlanPolicy::act(Simulation &simulation)
 {
     if (simulation.isPlanExists(planId))
     {
-        Plan p = simulation.getPlan(planId);
+        Plan &p = simulation.getPlan(planId);
         if (SelectionPolicy *newPol = getSelectionPolicy(newPolicy))
         {
             if (p.getSelectionPolicy() == newPol)
@@ -318,6 +318,10 @@ Close::Close() {}
 
 void Close::act(Simulation &simulation)
 {
+    for (const Plan &plan : simulation.getPlans())
+    {
+        plan.printbeforeclosed();
+    }
     complete();
     simulation.addAction(this);
 }

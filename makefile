@@ -1,4 +1,4 @@
-all: clean compile link run
+all: clean compile link
 
 run:
 	./bin/main config_file.txt

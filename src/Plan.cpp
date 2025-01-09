@@ -117,7 +117,7 @@ void Plan::step()
         FacilityType selectedFacility = selectionPolicy->selectMe(*this); // you are a genius itay :)
         underConstruction.push_back(new Facility(selectedFacility, settlement.getName()));
     }
-    for (int i = 0; i < (int)underConstruction.size(); i++)
+    for (int i = (int)underConstruction.size() - 1; i >= 0; i--)
     {
         underConstruction[i]->step();
         if (underConstruction[i]->getStatus() == FacilityStatus::OPERATIONAL)

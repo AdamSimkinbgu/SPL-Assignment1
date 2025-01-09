@@ -2,6 +2,8 @@
 #include "Action.h"
 #include "Auxiliary.h"
 #include <iostream>
+#include <cstdlib> // Include the necessary header file
+
 using std::string;
 
 Simulation::Simulation(const string &config_file_path) : isRunning(false),
@@ -25,15 +27,15 @@ Simulation::Simulation(const string &config_file_path) : isRunning(false),
             continue;
         }
         std::vector<std::string> arguments = Auxiliary::parseArguments(line);
-        if (arguments[0] == "settlement")
+        if (arguments.size() == 3 && arguments[0] == "settlement")
         {
             addSettlementFromConfig(arguments);
         }
-        else if (arguments[0] == "facility")
+        else if (arguments.size() == 7 && arguments[0] == "facility")
         {
             addFacilityFromConfig(arguments);
         }
-        else if (arguments[0] == "plan")
+        else if (arguments.size() == 3 && arguments[0] == "plan")
         {
             addPlanFromConfig(arguments);
         }
@@ -173,6 +175,16 @@ void Simulation::clear()
 
 void Simulation::addSettlementFromConfig(std::vector<std::string> args)
 {
+    if (args[2] != "0" && args[2] != "1" && args[2] != "2")
+    {
+        std::cout << "Error: Unknown settlement type" << std::endl;
+        return;
+    }
+    if (isSettlementExists(args[1]))
+    {
+        std::cout << "Error: Settlement already exists" << std::endl;
+        return;
+    }
     SettlementType settleType = args[2] == "0" ? SettlementType::VILLAGE : args[2] == "1" ? SettlementType::CITY
                                                                                           : SettlementType::METROPOLIS;
     Settlement *temp = new Settlement(args[1], settleType);
@@ -183,6 +195,14 @@ void Simulation::addSettlementFromConfig(std::vector<std::string> args)
 void Simulation::addFacilityFromConfig(std::vector<std::string> args)
 {
     std::string nameFacility = args[1];
+    for (FacilityType &facility : facilitiesOptions)
+    {
+        if (facility.getName() == nameFacility)
+        {
+            std::cout << "Error: Facility already exists" << std::endl;
+            return;
+        }
+    }
     FacilityCategory catFacility;
     if (args[2] == "0")
     {
@@ -192,9 +212,25 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
     {
         catFacility = FacilityCategory::ECONOMY;
     }
-    else
+    else if (args[2] == "2")
     {
         catFacility = FacilityCategory::ENVIRONMENT;
+    }
+    else
+    {
+        std::cout << "Error: Unknown facility category" << std::endl;
+        return;
+    }
+    for (int i = 3; i < 7; i++)
+    {
+        for (char s : args[i])
+        {
+            if (!std::isdigit(s))
+            {
+                std::cout << "Error: Invalid input" << std::endl;
+                return;
+            }
+        }
     }
     int price = std::stoi(args[3]);
     int lifeq_impact = std::stoi(args[4]);
@@ -204,13 +240,29 @@ void Simulation::addFacilityFromConfig(std::vector<std::string> args)
     // std::cout << "Facility " << nameFacility << " added." << std::endl;
 }
 
+bool isAllDigits(const std::string &str)
+{
+    for (char c : str)
+    {
+        if (!std::isdigit(c))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Simulation::addPlanFromConfig(std::vector<std::string> args)
 {
+    if (!isSettlementExists(args[1]))
+    {
+        std::cout << "Error: Settlement does not exist" << std::endl;
+        return;
+    }
     int planID = getNextPlanID();
     Settlement &currSettle = getSettlement(args[1]);
-
     SelectionPolicy *currSP;
-    if (args[2] == "env")
+    if (args[2] == "nve")
     {
         currSP = new NaiveSelection();
     }
@@ -228,7 +280,8 @@ void Simulation::addPlanFromConfig(std::vector<std::string> args)
     }
     else
     {
-        currSP = nullptr;
+        std::cout << "Error: Unknown selection policy" << std::endl;
+        return;
     }
     Plan newPlan(planID, currSettle, currSP, facilitiesOptions);
     plans.push_back(newPlan);
@@ -250,67 +303,141 @@ void Simulation::start()
         {
             std::cout << "Empty command" << std::endl;
         }
-        else if (commandArgs[0] == "log")
+        else if (commandArgs.size() == 1)
         {
-            PrintActionsLog *printActionsLog = new PrintActionsLog();
-            printActionsLog->act(*this);
+            if (commandArgs[0] == "log")
+            {
+                PrintActionsLog *printActionsLog = new PrintActionsLog();
+                printActionsLog->act(*this);
+            }
+            else if (commandArgs[0] == "close")
+            {
+                close();
+                Close *close = new Close();
+                close->act(*this);
+                clear();
+            }
+            else if (commandArgs[0] == "backup")
+            {
+                BackupSimulation *backup = new BackupSimulation();
+                backup->act(*this);
+            }
+            else if (commandArgs[0] == "restore")
+            {
+                RestoreSimulation *restore = new RestoreSimulation();
+                restore->act(*this);
+            }
         }
-        else if (commandArgs[0] == "close")
+        else if (commandArgs.size() == 2)
         {
-            close();
-            Close *close = new Close();
-            close->act(*this);
+            if (commandArgs[0] == "step")
+            {
+                if (!isAllDigits(commandArgs[1]))
+                {
+                    std::cout << "Error: Invalid input for step" << std::endl;
+                    continue;
+                }
+                SimulateStep *step = new SimulateStep(std::stoi(commandArgs[1]));
+                step->act(*this);
+            }
+            else if (commandArgs[0] == "planStatus")
+            {
+                if (!isAllDigits(commandArgs[1]))
+                {
+                    std::cout << "Error: Invalid input for planStatus" << std::endl;
+                    continue;
+                }
+                PrintPlanStatus *printPlanStatus = new PrintPlanStatus(std::stoi(commandArgs[1]));
+                printPlanStatus->act(*this);
+            }
         }
-        else if (commandArgs[0] == "backup")
+        else if (commandArgs.size() == 3)
         {
-            BackupSimulation *backup = new BackupSimulation();
-            backup->act(*this);
+            if (commandArgs[0] == "plan")
+            {
+                if (!isSettlementExists(commandArgs[1]))
+                {
+                    std::cout << "Error: Settlement does not exist" << std::endl;
+                    continue;
+                }
+                if (commandArgs[2] != "nve" && commandArgs[2] != "bal" && commandArgs[2] != "eco" && commandArgs[2] != "env")
+                {
+                    std::cout << "Error: Unknown selection policy" << std::endl;
+                    continue;
+                }
+                AddPlan *addPlan = new AddPlan(commandArgs[1], commandArgs[2]);
+                addPlan->act(*this);
+            }
+            else if (commandArgs[0] == "settlement")
+            {
+                if (isSettlementExists(commandArgs[1]))
+                {
+                    std::cout << "Error: Settlement already exists" << std::endl;
+                    continue;
+                }
+                if (commandArgs[2] != "0" && commandArgs[2] != "1" && commandArgs[2] != "2")
+                {
+                    std::cout << "Error: Unknown settlement type" << std::endl;
+                    continue;
+                }
+                SettlementType settleType = commandArgs[2] == "0" ? SettlementType::VILLAGE : commandArgs[2] == "1" ? SettlementType::CITY
+                                                                                                                    : SettlementType::METROPOLIS;
+                AddSettlement *addSettlement = new AddSettlement(commandArgs[1], settleType);
+                addSettlement->act(*this);
+            }
+            else if (commandArgs[0] == "changePolicy")
+            {
+                if (!isPlanExists(std::stoi(commandArgs[1])))
+                {
+                    std::cout << "Error: Plan does not exist" << std::endl;
+                    continue;
+                }
+                if (commandArgs[2] != "nve" && commandArgs[2] != "bal" && commandArgs[2] != "eco" && commandArgs[2] != "env")
+                {
+                    std::cout << "Error: Unknown selection policy" << std::endl;
+                    continue;
+                }
+                ChangePlanPolicy *changePlanPolicy = new ChangePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
+                changePlanPolicy->act(*this);
+            }
         }
-        else if (commandArgs[0] == "restore")
+        else if (commandArgs.size() == 7)
         {
-            RestoreSimulation *restore = new RestoreSimulation();
-            restore->act(*this);
-        }
-        else if (commandArgs.size() < 2)
-        {
-            std::cout << "The command with too little arguments" << std::endl;
-        }
-        else if (commandArgs[0] == "step")
-        {
-            SimulateStep *step = new SimulateStep(std::stoi(commandArgs[1]));
-            step->act(*this);
-        }
-        else if (commandArgs[0] == "plan")
-        {
-            AddPlan *addPlan = new AddPlan(commandArgs[1], commandArgs[2]);
-            addPlan->act(*this);
-        }
-        else if (commandArgs[0] == "settlement")
-        {
-            AddSettlement *addSettlement = new AddSettlement(commandArgs[1], commandArgs[2] == "0" ? SettlementType::VILLAGE : commandArgs[2] == "1" ? SettlementType::CITY
-                                                                                                                                                     : SettlementType::METROPOLIS);
-            addSettlement->act(*this);
-        }
-        else if (commandArgs[0] == "facility")
-        {
-            FacilityCategory category = commandArgs[2] == "0" ? FacilityCategory::ECONOMY : commandArgs[2] == "1" ? FacilityCategory::LIFE_QUALITY
-                                                                                                                  : FacilityCategory::ENVIRONMENT;
-            int price = std::stoi(commandArgs[3]);
-            int lifeQualityScore = std::stoi(commandArgs[4]);
-            int economyScore = std::stoi(commandArgs[5]);
-            int environmentScore = std::stoi(commandArgs[6]);
-            AddFacility *addFacility = new AddFacility(commandArgs[1], category, price, lifeQualityScore, economyScore, environmentScore);
-            addFacility->act(*this);
-        }
-        else if (commandArgs[0] == "planStatus")
-        {
-            PrintPlanStatus *printPlanStatus = new PrintPlanStatus(std::stoi(commandArgs[1]));
-            printPlanStatus->act(*this);
-        }
-        else if (commandArgs[0] == "changePolicy")
-        {
-            ChangePlanPolicy *changePlanPolicy = new ChangePlanPolicy(std::stoi(commandArgs[1]), commandArgs[2]);
-            changePlanPolicy->act(*this);
+            if (commandArgs[0] == "facility")
+            {
+                for (FacilityType &facility : facilitiesOptions)
+                {
+                    if (facility.getName() == commandArgs[1])
+                    {
+                        std::cout << "Error: Facility already exists" << std::endl;
+                        return;
+                    }
+                }
+                for (int i = 3; i < 7; i++)
+                {
+                    for (char s : commandArgs[i])
+                    {
+                        if (!std::isdigit(s))
+                        {
+                            std::cout << "Error: Invalid input" << std::endl;
+                            return;
+                        }
+                    }
+                }
+                if (commandArgs[2] != "0" && commandArgs[2] != "1" && commandArgs[2] != "2")
+                {
+                    std::cout << "Error: Unknown settlement type" << std::endl;
+                    return;
+                }
+                FacilityCategory category = commandArgs[2] == "0" ? FacilityCategory::LIFE_QUALITY : commandArgs[2] == "1" ? FacilityCategory::ECONOMY
+                                                                                                                           : FacilityCategory::ENVIRONMENT;
+                int price = std::stoi(commandArgs[3]);
+                int lifeQualityScore = std::stoi(commandArgs[4]);
+                int economyScore = std::stoi(commandArgs[5]);
+                int environmentScore = std::stoi(commandArgs[6]);
+                AddFacility *addFacility = new AddFacility(commandArgs[1], category, price, lifeQualityScore, economyScore, environmentScore);
+                addFacility->act(*this);
+            }
         }
         else
         {
@@ -460,7 +587,7 @@ void Simulation::step()
 
 void Simulation::close()
 {
-    clear();
+    // clear();
     isRunning = false;
 }
 
